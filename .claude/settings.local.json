@@ -44,7 +44,9 @@
       "Bash(pkill -9 -f 'next dev')",
       "Bash(pkill -9 -f 'pnpm dev')",
       "Bash(curl -s 'http://localhost:4000/posts?projectId=69eabe084a0a344c81d9d15d&limit=100')",
-      "Bash(python3 -c \"import json,sys;r=json.load\\(sys.stdin\\);print\\(f'posts: {len\\(r[\\\\\"items\\\\\"]\\)}'\\)\")"
+      "Bash(python3 -c \"import json,sys;r=json.load\\(sys.stdin\\);print\\(f'posts: {len\\(r[\\\\\"items\\\\\"]\\)}'\\)\")",
+      "Bash(curl -s -w \"\\\\n%{http_code}\\\\n\" -X DELETE http://localhost:4000/projects/69eabcf67ce9c804ab16f97d)",
+      "Bash(python3 -c \"import json,sys;ps=json.load\\(sys.stdin\\);print\\('projects in DB:', len\\(ps\\)\\);[print\\(f'  - {p[\\\\\"name\\\\\"]}  isActive={p[\\\\\"isActive\\\\\"]}  sources={p.get\\(\\\\\"sourcesCount\\\\\",\\\\\"?\\\\\"\\)}'\\) for p in ps]\")"
     ]
   }
 }

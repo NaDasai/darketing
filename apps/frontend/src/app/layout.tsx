@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { Navbar } from '@/components/layout/Navbar';
 import { Providers } from './providers';
 import './globals.css';
 
@@ -27,7 +28,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen bg-zinc-950 font-sans text-zinc-100 antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          <Navbar />
+          {children}
+        </Providers>
       </body>
     </html>
   );
