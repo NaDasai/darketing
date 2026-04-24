@@ -1,7 +1,12 @@
 import mongoose from 'mongoose';
-import type { CreateSourceInput, SourceDto } from '@darketing/shared';
+import type {
+  CreateSourceInput,
+  DiscoveredFeed,
+  SourceDto,
+} from '@darketing/shared';
 import { ProjectModel, SourceModel } from '../../models';
 import { fetchFeed } from '../../services/rss.service';
+import { discoverFeeds } from '../../services/feed-discovery.service';
 
 function toDto(doc: { toJSON: () => unknown }): SourceDto {
   return doc.toJSON() as SourceDto;
@@ -66,4 +71,10 @@ export async function createSourceForProject(
 export async function deleteSource(id: string): Promise<boolean> {
   const deleted = await SourceModel.findByIdAndDelete(id);
   return deleted !== null;
+}
+
+export async function discoverFeedsForUrl(
+  url: string,
+): Promise<DiscoveredFeed[]> {
+  return discoverFeeds(url);
 }

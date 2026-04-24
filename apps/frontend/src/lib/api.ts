@@ -1,6 +1,7 @@
 import { z, type ZodTypeAny } from 'zod';
 import {
   ContentItemDtoSchema,
+  DiscoverFeedsResultSchema,
   PaginatedPostsSchema,
   PostDtoSchema,
   ProjectDtoSchema,
@@ -9,6 +10,9 @@ import {
   type ContentQuery,
   type CreateProjectInput,
   type CreateSourceInput,
+  type DiscoveredFeed,
+  type DiscoverFeedsInput,
+  type DiscoverFeedsResult,
   type PaginatedPosts,
   type PostDto,
   type PostsQuery,
@@ -172,6 +176,14 @@ export const sourcesApi = {
   remove(id: string): Promise<void> {
     return request(`/sources/${id}`, { method: 'DELETE' });
   },
+
+  discover(input: DiscoverFeedsInput): Promise<DiscoverFeedsResult> {
+    return request('/sources/discover', {
+      method: 'POST',
+      body: input,
+      schema: DiscoverFeedsResultSchema,
+    });
+  },
 };
 
 // ---------- Content ----------
@@ -225,6 +237,7 @@ export const postsApi = {
 
 export type {
   ContentItemDto,
+  DiscoveredFeed,
   PaginatedPosts,
   PostDto,
   ProjectDto,

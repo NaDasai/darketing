@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { CreateSourceInput } from '@darketing/shared';
+import type { CreateSourceInput, DiscoverFeedsInput } from '@darketing/shared';
 import * as service from './service';
 import { SourceDuplicateError, SourceValidationError } from './service';
 
@@ -45,4 +45,12 @@ export async function deleteSourceHandler(
   const ok = await service.deleteSource(req.params.id);
   if (!ok) throw req.server.httpErrors.notFound('Source not found');
   reply.code(204).send();
+}
+
+export async function discoverSourcesHandler(
+  req: FastifyRequest<{ Body: DiscoverFeedsInput }>,
+  reply: FastifyReply,
+): Promise<void> {
+  const feeds = await service.discoverFeedsForUrl(req.body.url);
+  reply.send({ feeds });
 }

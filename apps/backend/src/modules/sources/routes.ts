@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
-import { CreateSourceSchema, ObjectIdSchema } from '@darketing/shared';
+import {
+  CreateSourceSchema,
+  DiscoverFeedsSchema,
+  ObjectIdSchema,
+} from '@darketing/shared';
 import * as controller from './controller';
 
 const IdParamsSchema = z.object({ id: ObjectIdSchema });
@@ -16,6 +20,12 @@ const sourcesRoutes: FastifyPluginAsyncZod = async (fastify) => {
     '/projects/:id/sources',
     { schema: { params: IdParamsSchema, body: CreateSourceSchema } },
     controller.createProjectSourceHandler,
+  );
+
+  fastify.post(
+    '/sources/discover',
+    { schema: { body: DiscoverFeedsSchema } },
+    controller.discoverSourcesHandler,
   );
 
   fastify.delete(
