@@ -201,7 +201,7 @@ export const contentApi = {
       query: {
         selected: query.selected,
         limit: query.limit,
-        cursor: query.cursor,
+        page: query.page,
       },
       schema: PaginatedContentSchema,
       signal,

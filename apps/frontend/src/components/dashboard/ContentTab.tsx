@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import {
   contentApi,
   projectsApi,
@@ -24,22 +24,18 @@ const DURATION_OPTIONS: { value: DurationFilter; label: string; ms: number | nul
 ];
 
 export function ContentTab({ projectId }: { projectId: string }) {
+  const [page, setPage] = useState(1);
   const [duration, setDuration] = useState<DurationFilter>('ALL');
   // Empty set means "all sources" — keeps the no-sources-loaded-yet case sane.
   const [selectedSourceIds, setSelectedSourceIds] = useState<Set<string>>(
     new Set(),
   );
 
-  const content = useInfiniteQuery({
-    queryKey: ['content', projectId],
-    queryFn: ({ pageParam, signal }) =>
-      contentApi.list(
-        projectId,
-        { limit: PAGE_SIZE, cursor: pageParam ?? undefined },
-        signal,
-      ),
-    initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  const content = useQuery({
+    queryKey: ['content', projectId, page],
+    queryFn: ({ signal }) =>
+      contentApi.list(projectId, { limit: PAGE_SIZE, page }, signal),
+    placeholderData: keepPreviousData,
   });
 
   const sources = useQuery({
@@ -73,17 +69,18 @@ export function ContentTab({ projectId }: { projectId: string }) {
     setSelectedSourceIds(new Set());
   }
 
-  const allItems = useMemo(
-    () => content.data?.pages.flatMap((p) => p.items),
-    [content.data],
-  );
+  const total = content.data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
+  // Filters apply client-side to the current page's items. On a paged list
+  // this can leave a page looking sparse — callers can navigate to see more.
   const filteredContent = useMemo(() => {
-    if (!allItems) return undefined;
+    const items = content.data?.items;
+    if (!items) return undefined;
     const windowMs = DURATION_OPTIONS.find((o) => o.value === duration)?.ms;
     const cutoff = windowMs == null ? null : Date.now() - windowMs;
     const sourceFilterActive = selectedSourceIds.size > 0;
-    return allItems.filter((item) => {
+    return items.filter((item) => {
       if (sourceFilterActive && !selectedSourceIds.has(item.sourceId)) {
         return false;
       }
@@ -93,9 +90,12 @@ export function ContentTab({ projectId }: { projectId: string }) {
       }
       return true;
     });
-  }, [allItems, duration, selectedSourceIds]);
+  }, [content.data, duration, selectedSourceIds]);
 
   const sourceFilterActive = selectedSourceIds.size > 0;
+
+  const rangeStart = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min(page * PAGE_SIZE, total);
 
   return (
     <div className="flex flex-col gap-3">
@@ -168,8 +168,10 @@ export function ContentTab({ projectId }: { projectId: string }) {
       filteredContent.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="py-10 text-center text-sm text-zinc-400">
-            {allItems && allItems.length > 0
-              ? 'No content matches the current filters.'
+            {total > 0
+              ? content.data && content.data.items.length > 0
+                ? 'No content on this page matches the current filters.'
+                : 'No content on this page.'
               : 'No content yet. The worker will populate this tab after the next run.'}
           </CardContent>
         </Card>
@@ -241,16 +243,32 @@ export function ContentTab({ projectId }: { projectId: string }) {
         );
       })}
 
-      {content.hasNextPage ? (
-        <div className="flex justify-center pt-2">
-          <Button
-            variant="secondary"
-            onClick={() => content.fetchNextPage()}
-            isLoading={content.isFetchingNextPage}
-            disabled={content.isFetchingNextPage}
-          >
-            Load more
-          </Button>
+      {total > 0 ? (
+        <div className="flex items-center justify-between gap-3 pt-2 text-xs text-zinc-400">
+          <span>
+            Showing {rangeStart}–{rangeEnd} of {total}
+          </span>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1 || content.isFetching}
+            >
+              Previous
+            </Button>
+            <span className="tabular-nums text-zinc-300">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages || content.isFetching}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       ) : null}
     </div>

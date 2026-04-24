@@ -17,12 +17,14 @@ export const ContentItemDtoSchema = z.object({
 export const ContentQuerySchema = z.object({
   selected: BooleanStringSchema.optional(),
   limit: z.coerce.number().int().positive().max(100).default(20),
-  cursor: z.string().optional(),
+  page: z.coerce.number().int().positive().default(1),
 });
 
 export const PaginatedContentSchema = z.object({
   items: z.array(ContentItemDtoSchema),
-  nextCursor: z.string().nullable(),
+  page: z.number().int().positive(),
+  limit: z.number().int().positive(),
+  total: z.number().int().nonnegative(),
 });
 
 export type ContentItemDto = z.infer<typeof ContentItemDtoSchema>;
