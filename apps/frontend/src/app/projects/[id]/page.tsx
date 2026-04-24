@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -19,7 +19,10 @@ import { PostsTab } from '@/components/dashboard/PostsTab';
 import { SourcesTab } from '@/components/dashboard/SourcesTab';
 import { ContentTab } from '@/components/dashboard/ContentTab';
 import { SettingsTab } from '@/components/dashboard/SettingsTab';
-import { RunPipelineDialog } from '@/components/dashboard/RunPipelineDialog';
+import {
+  RunPipelineTracker,
+  type RunTerminalResult,
+} from '@/components/dashboard/RunPipelineTracker';
 import { formatRelative } from '@/lib/utils';
 
 type TabKey = 'posts' | 'sources' | 'content' | 'settings';
@@ -30,9 +33,9 @@ export default function ProjectDashboardPage() {
   const projectId = params?.id ?? '';
   const [active, setActive] = useState<TabKey>('posts');
   const [runJobId, setRunJobId] = useState<string | null>(null);
-  const [runDialogOpen, setRunDialogOpen] = useState(false);
+  const runningToastIdRef = useRef<number | null>(null);
   const qc = useQueryClient();
-  const { toast } = useToast();
+  const { toast, dismiss } = useToast();
 
   const project = useQuery({
     queryKey: ['project', projectId],
@@ -44,7 +47,11 @@ export default function ProjectDashboardPage() {
     mutationFn: () => projectsApi.run(projectId),
     onSuccess: (res) => {
       setRunJobId(res.jobId);
-      setRunDialogOpen(true);
+      runningToastIdRef.current = toast(
+        'Pipeline run in progress…',
+        'info',
+        { sticky: true },
+      );
     },
     onError: (err: unknown) => {
       const msg =
@@ -52,6 +59,26 @@ export default function ProjectDashboardPage() {
       toast(msg, 'error');
     },
   });
+
+  const handleRunTerminal = (result: RunTerminalResult) => {
+    if (runningToastIdRef.current != null) {
+      dismiss(runningToastIdRef.current);
+      runningToastIdRef.current = null;
+    }
+    if (result.state === 'completed') {
+      const p = result.progress;
+      toast(
+        `Pipeline run complete — ${p?.newItems ?? 0} new, ${p?.selected ?? 0} selected, ${p?.postsCreated ?? 0} posts`,
+        'success',
+      );
+    } else {
+      toast(
+        `Pipeline run failed: ${result.failedReason ?? 'Unknown error'}`,
+        'error',
+      );
+    }
+    setRunJobId(null);
+  };
 
   const remove = useMutation({
     mutationFn: () => projectsApi.remove(projectId),
@@ -146,10 +173,10 @@ export default function ProjectDashboardPage() {
           </Button>
           <Button
             onClick={() => run.mutate()}
-            isLoading={run.isPending}
-            disabled={!p.isActive}
+            isLoading={run.isPending || !!runJobId}
+            disabled={!p.isActive || !!runJobId}
           >
-            Run pipeline now
+            {runJobId ? 'Running…' : 'Run pipeline now'}
           </Button>
         </div>
       </header>
@@ -176,11 +203,10 @@ export default function ProjectDashboardPage() {
         </TabPanel>
       </Tabs>
 
-      <RunPipelineDialog
-        open={runDialogOpen}
+      <RunPipelineTracker
         jobId={runJobId}
         projectId={projectId}
-        onClose={() => setRunDialogOpen(false)}
+        onTerminal={handleRunTerminal}
       />
     </main>
   );

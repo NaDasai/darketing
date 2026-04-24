@@ -18,8 +18,17 @@ interface ToastMessage {
   variant: ToastVariant;
 }
 
+interface ToastOptions {
+  sticky?: boolean;
+}
+
 interface ToastContextValue {
-  toast: (message: string, variant?: ToastVariant) => void;
+  toast: (
+    message: string,
+    variant?: ToastVariant,
+    options?: ToastOptions,
+  ) => number;
+  dismiss: (id: number) => void;
 }
 
 const ToastContext = createContext<ToastContextValue | null>(null);
@@ -37,18 +46,32 @@ export function useToast(): ToastContextValue {
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<ToastMessage[]>([]);
 
+  const dismiss = useCallback((id: number) => {
+    setItems((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+
   const toast = useCallback(
-    (message: string, variant: ToastVariant = 'info') => {
+    (
+      message: string,
+      variant: ToastVariant = 'info',
+      options?: ToastOptions,
+    ): number => {
       const id = Date.now() + Math.random();
       setItems((prev) => [...prev, { id, message, variant }]);
-      setTimeout(() => {
-        setItems((prev) => prev.filter((t) => t.id !== id));
-      }, TOAST_DURATION_MS);
+      if (!options?.sticky) {
+        setTimeout(() => {
+          setItems((prev) => prev.filter((t) => t.id !== id));
+        }, TOAST_DURATION_MS);
+      }
+      return id;
     },
     [],
   );
 
-  const value = useMemo<ToastContextValue>(() => ({ toast }), [toast]);
+  const value = useMemo<ToastContextValue>(
+    () => ({ toast, dismiss }),
+    [toast, dismiss],
+  );
 
   return (
     <ToastContext.Provider value={value}>
