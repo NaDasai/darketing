@@ -10,6 +10,7 @@ export interface IProject {
   domain: string;
   topNPerRun: number;
   isActive: boolean;
+  lastRunStartedAt: Date | null;
   lastRunAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -24,6 +25,7 @@ const projectSchema = new Schema<IProject>(
     domain: { type: String, required: true, trim: true, maxlength: 200 },
     topNPerRun: { type: Number, default: 5, min: 1, max: 50 },
     isActive: { type: Boolean, default: true, index: true },
+    lastRunStartedAt: { type: Date, default: null },
     lastRunAt: { type: Date, default: null },
   },
   { timestamps: true },

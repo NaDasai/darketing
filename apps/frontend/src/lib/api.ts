@@ -2,6 +2,7 @@ import { z, type ZodTypeAny } from 'zod';
 import {
   ContentItemDtoSchema,
   DiscoverFeedsResultSchema,
+  JobStatusDtoSchema,
   PaginatedPostsSchema,
   PostDtoSchema,
   ProjectDtoSchema,
@@ -13,6 +14,7 @@ import {
   type DiscoveredFeed,
   type DiscoverFeedsInput,
   type DiscoverFeedsResult,
+  type JobStatusDto,
   type PaginatedPosts,
   type PostDto,
   type PostsQuery,
@@ -235,9 +237,21 @@ export const postsApi = {
   },
 };
 
+// ---------- Jobs ----------
+
+export const jobsApi = {
+  getStatus(jobId: string, signal?: AbortSignal): Promise<JobStatusDto> {
+    return request(`/jobs/${jobId}`, {
+      schema: JobStatusDtoSchema,
+      signal,
+    });
+  },
+};
+
 export type {
   ContentItemDto,
   DiscoveredFeed,
+  JobStatusDto,
   PaginatedPosts,
   PostDto,
   ProjectDto,

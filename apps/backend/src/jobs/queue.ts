@@ -47,6 +47,53 @@ export async function enqueuePipelineRun(
   return job.id;
 }
 
+export type JobUiState =
+  | 'waiting'
+  | 'active'
+  | 'completed'
+  | 'failed'
+  | 'unknown';
+
+export interface JobStatus {
+  id: string;
+  state: JobUiState;
+  progress: unknown;
+  failedReason: string | null;
+  processedOn: number | null;
+  finishedOn: number | null;
+}
+
+function mapState(raw: string): JobUiState {
+  switch (raw) {
+    case 'completed':
+    case 'failed':
+    case 'active':
+    case 'waiting':
+      return raw;
+    case 'delayed':
+    case 'paused':
+    case 'prioritized':
+    case 'waiting-children':
+      return 'waiting';
+    default:
+      return 'unknown';
+  }
+}
+
+export async function getJobStatus(jobId: string): Promise<JobStatus | null> {
+  const job = await pipelineQueue.getJob(jobId);
+  if (!job) return null;
+  const rawState = await job.getState();
+  return {
+    id: jobId,
+    state: mapState(rawState),
+    progress: job.progress ?? null,
+    failedReason: job.failedReason ?? null,
+    processedOn: job.processedOn ?? null,
+    finishedOn: job.finishedOn ?? null,
+  };
+}
+
 export async function closeQueue(): Promise<void> {
   await pipelineQueue.close();
   await connection.quit();

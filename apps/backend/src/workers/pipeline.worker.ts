@@ -192,18 +192,45 @@ async function runPipeline(job: Job<PipelineJobData>): Promise<void> {
   }
 
   log.info('pipeline: starting run');
+  await job.updateProgress({ phase: 'starting', message: 'Starting run' });
 
+  // Stamp the run-start time so the UI can mark items added during this run
+  // as "new" (item.createdAt >= project.lastRunStartedAt).
+  project.lastRunStartedAt = new Date();
+  await project.save();
+
+  await job.updateProgress({
+    phase: 'ingesting',
+    message: 'Fetching RSS sources',
+  });
   const insertedIds = await ingestSources({ _id: project._id, id: String(project._id) }, log);
   log.info({ newItems: insertedIds.length }, 'pipeline: ingestion done');
 
+  await job.updateProgress({
+    phase: 'summarizing',
+    message: 'Summarizing and scoring new items',
+    newItems: insertedIds.length,
+  });
   await summarizeAndScore(insertedIds, project, log);
 
+  await job.updateProgress({
+    phase: 'generating',
+    message: 'Generating posts for top picks',
+    newItems: insertedIds.length,
+  });
   const { selected, postsCreated } = await selectTopAndGenerate(insertedIds, project, log);
   log.info({ selected, postsCreated }, 'pipeline: generation done');
 
   project.lastRunAt = new Date();
   await project.save();
 
+  await job.updateProgress({
+    phase: 'done',
+    message: 'Run complete',
+    newItems: insertedIds.length,
+    selected,
+    postsCreated,
+  });
   log.info('pipeline: run complete');
 }
 

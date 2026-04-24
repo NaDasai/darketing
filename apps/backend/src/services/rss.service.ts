@@ -9,9 +9,11 @@ export interface NormalizedItem {
   publishedAt: Date | null;
 }
 
-// Minimum content length after HTML-stripping. Feeds with bare titles or
-// 1-line teasers aren't worth summarizing or scoring.
-export const MIN_CONTENT_CHARS = 200;
+// Minimum content length after HTML-stripping. Many publisher feeds (e.g.
+// WordPress sites that only put a 1-line excerpt in <description>) sit in the
+// 100–150 char range. 100 keeps near-empty items out without dropping the
+// majority of headline-style feeds.
+export const MIN_CONTENT_CHARS = 100;
 
 type FeedItem = {
   title?: string;

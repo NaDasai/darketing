@@ -2,7 +2,12 @@
 
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { contentApi, sourcesApi, type SourceDto } from '@/lib/api';
+import {
+  contentApi,
+  projectsApi,
+  sourcesApi,
+  type SourceDto,
+} from '@/lib/api';
 import { Badge, Card, CardContent, Select, Skeleton } from '@/components/ui';
 import { cn, formatDate, formatRelative } from '@/lib/utils';
 
@@ -34,9 +39,18 @@ export function ContentTab({ projectId }: { projectId: string }) {
     queryFn: ({ signal }) => sourcesApi.list(projectId, signal),
   });
 
+  const project = useQuery({
+    queryKey: ['project', projectId],
+    queryFn: ({ signal }) => projectsApi.get(projectId, signal),
+  });
+
   const sourceById = new Map<string, SourceDto>(
     sources.data?.map((s) => [s.id, s]) ?? [],
   );
+
+  const lastRunStartedAtMs = project.data?.lastRunStartedAt
+    ? new Date(project.data.lastRunStartedAt).getTime()
+    : null;
 
   function toggleSource(id: string) {
     setSelectedSourceIds((prev) => {
@@ -150,8 +164,14 @@ export function ContentTab({ projectId }: { projectId: string }) {
 
       {filteredContent?.map((item) => {
         const source = sourceById.get(item.sourceId);
+        const isFromLastRun =
+          lastRunStartedAtMs != null &&
+          new Date(item.createdAt).getTime() >= lastRunStartedAtMs;
         return (
-          <Card key={item.id}>
+          <Card
+            key={item.id}
+            className={cn(isFromLastRun && 'border-accent-700/60')}
+          >
             <CardContent className="flex flex-col gap-2">
               <div className="flex items-start justify-between gap-3">
                 <a
@@ -163,6 +183,9 @@ export function ContentTab({ projectId }: { projectId: string }) {
                   {item.title}
                 </a>
                 <div className="flex shrink-0 items-center gap-2">
+                  {isFromLastRun ? (
+                    <Badge tone="success">New</Badge>
+                  ) : null}
                   {item.selected ? (
                     <Badge tone="accent">Selected</Badge>
                   ) : null}

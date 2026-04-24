@@ -47,7 +47,19 @@
       "Bash(python3 -c \"import json,sys;r=json.load\\(sys.stdin\\);print\\(f'posts: {len\\(r[\\\\\"items\\\\\"]\\)}'\\)\")",
       "Bash(curl -s -w \"\\\\n%{http_code}\\\\n\" -X DELETE http://localhost:4000/projects/69eabcf67ce9c804ab16f97d)",
       "Bash(python3 -c \"import json,sys;ps=json.load\\(sys.stdin\\);print\\('projects in DB:', len\\(ps\\)\\);[print\\(f'  - {p[\\\\\"name\\\\\"]}  isActive={p[\\\\\"isActive\\\\\"]}  sources={p.get\\(\\\\\"sourcesCount\\\\\",\\\\\"?\\\\\"\\)}'\\) for p in ps]\")",
-      "Bash(pnpm --filter @darketing/frontend exec tsc --noEmit)"
+      "Bash(pnpm --filter @darketing/frontend exec tsc --noEmit)",
+      "Bash(mongosh --quiet --eval \"db.adminCommand\\('ping'\\).ok\")",
+      "Bash(redis-cli LRANGE bull:project-pipeline:active 0 -1)",
+      "Bash(redis-cli LRANGE bull:project-pipeline:wait 0 -1)",
+      "Bash(redis-cli ZCARD bull:project-pipeline:failed)",
+      "Bash(redis-cli ZRANGE bull:project-pipeline:failed -3 -1)",
+      "Bash(lsof -nP -iTCP:6379 -sTCP:LISTEN)",
+      "Bash(lsof -nP -iTCP:27017 -sTCP:LISTEN)",
+      "Bash(lsof -nP -iTCP:27017)",
+      "Bash(lsof -nP -iTCP:6379)",
+      "Bash(ps -o pid,etime,command -p 48690,48705)",
+      "Bash(ps -ax -o pid,etime,command)",
+      "Bash(curl -sS -A 'DarketingRSSBot/0.1 \\(+https://github.com/\\)' --max-time 10 https://crypto.news/feed/)"
     ]
   }
 }

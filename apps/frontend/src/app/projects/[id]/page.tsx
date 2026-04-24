@@ -19,6 +19,7 @@ import { PostsTab } from '@/components/dashboard/PostsTab';
 import { SourcesTab } from '@/components/dashboard/SourcesTab';
 import { ContentTab } from '@/components/dashboard/ContentTab';
 import { SettingsTab } from '@/components/dashboard/SettingsTab';
+import { RunPipelineDialog } from '@/components/dashboard/RunPipelineDialog';
 import { formatRelative } from '@/lib/utils';
 
 type TabKey = 'posts' | 'sources' | 'content' | 'settings';
@@ -28,6 +29,8 @@ export default function ProjectDashboardPage() {
   const router = useRouter();
   const projectId = params?.id ?? '';
   const [active, setActive] = useState<TabKey>('posts');
+  const [runJobId, setRunJobId] = useState<string | null>(null);
+  const [runDialogOpen, setRunDialogOpen] = useState(false);
   const qc = useQueryClient();
   const { toast } = useToast();
 
@@ -40,7 +43,8 @@ export default function ProjectDashboardPage() {
   const run = useMutation({
     mutationFn: () => projectsApi.run(projectId),
     onSuccess: (res) => {
-      toast(`Pipeline enqueued (job ${res.jobId.slice(0, 8)}…)`, 'success');
+      setRunJobId(res.jobId);
+      setRunDialogOpen(true);
     },
     onError: (err: unknown) => {
       const msg =
@@ -171,6 +175,13 @@ export default function ProjectDashboardPage() {
           <SettingsTab project={p} />
         </TabPanel>
       </Tabs>
+
+      <RunPipelineDialog
+        open={runDialogOpen}
+        jobId={runJobId}
+        projectId={projectId}
+        onClose={() => setRunDialogOpen(false)}
+      />
     </main>
   );
 }

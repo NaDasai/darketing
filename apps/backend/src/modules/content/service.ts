@@ -16,9 +16,12 @@ export async function listContentForProject(
   const filter: Record<string, unknown> = { projectId };
   if (query.selected !== undefined) filter.selected = query.selected;
 
-  // Ranking view: highest-scored first, then newest. Ties broken by createdAt.
+  // Recency-first feed: newest items always visible. Score is shown in the
+  // badge and ?selected=true filters to the top picks. Sorting by score-desc
+  // would push unscored items (score=null) to the end and they'd often get
+  // cut off by the limit before the user ever sees them.
   const items = await ContentItemModel.find(filter)
-    .sort({ score: -1, createdAt: -1 })
+    .sort({ createdAt: -1 })
     .limit(query.limit);
 
   return items.map(toDto);

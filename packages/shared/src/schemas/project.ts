@@ -27,6 +27,7 @@ export const ProjectDtoSchema = ProjectCoreSchema.extend({
   updatedAt: IsoDateSchema,
   sourcesCount: z.number().int().nonnegative().optional(),
   contentCount: z.number().int().nonnegative().optional(),
+  lastRunStartedAt: IsoDateSchema.nullable().optional(),
   lastRunAt: IsoDateSchema.nullable().optional(),
 });
 
