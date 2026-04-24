@@ -1,11 +1,24 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { contentApi, sourcesApi, type SourceDto } from '@/lib/api';
-import { Badge, Card, CardContent, Skeleton } from '@/components/ui';
-import { formatRelative } from '@/lib/utils';
+import { Badge, Card, CardContent, Select, Skeleton } from '@/components/ui';
+import { formatDate, formatRelative } from '@/lib/utils';
+
+type DurationFilter = 'ALL' | '1H' | '24H' | '7D' | '30D';
+
+const DURATION_OPTIONS: { value: DurationFilter; label: string; ms: number | null }[] = [
+  { value: 'ALL', label: 'Any time', ms: null },
+  { value: '1H', label: 'Last hour', ms: 60 * 60 * 1000 },
+  { value: '24H', label: 'Last 24 hours', ms: 24 * 60 * 60 * 1000 },
+  { value: '7D', label: 'Last 7 days', ms: 7 * 24 * 60 * 60 * 1000 },
+  { value: '30D', label: 'Last 30 days', ms: 30 * 24 * 60 * 60 * 1000 },
+];
 
 export function ContentTab({ projectId }: { projectId: string }) {
+  const [duration, setDuration] = useState<DurationFilter>('ALL');
+
   const content = useQuery({
     queryKey: ['content', projectId],
     queryFn: ({ signal }) =>
@@ -21,8 +34,37 @@ export function ContentTab({ projectId }: { projectId: string }) {
     sources.data?.map((s) => [s.id, s]) ?? [],
   );
 
+  const filteredContent = useMemo(() => {
+    if (!content.data) return undefined;
+    const windowMs = DURATION_OPTIONS.find((o) => o.value === duration)?.ms;
+    if (windowMs == null) return content.data;
+    const cutoff = Date.now() - windowMs;
+    return content.data.filter((item) => {
+      const ts = new Date(item.publishedAt ?? item.createdAt).getTime();
+      return Number.isFinite(ts) && ts >= cutoff;
+    });
+  }, [content.data, duration]);
+
   return (
     <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-end gap-2">
+        <label htmlFor="content-duration" className="text-xs text-zinc-400">
+          Posted within
+        </label>
+        <Select
+          id="content-duration"
+          value={duration}
+          onChange={(e) => setDuration(e.target.value as DurationFilter)}
+          className="h-9 w-44"
+        >
+          {DURATION_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </Select>
+      </div>
+
       {content.isPending
         ? Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-20 w-full" />
@@ -30,17 +72,18 @@ export function ContentTab({ projectId }: { projectId: string }) {
         : null}
 
       {!content.isPending &&
-      content.data &&
-      content.data.length === 0 ? (
+      filteredContent &&
+      filteredContent.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="py-10 text-center text-sm text-zinc-400">
-            No content yet. The worker will populate this tab after the next
-            run.
+            {content.data && content.data.length > 0
+              ? 'No content matches the selected duration filter.'
+              : 'No content yet. The worker will populate this tab after the next run.'}
           </CardContent>
         </Card>
       ) : null}
 
-      {content.data?.map((item) => {
+      {filteredContent?.map((item) => {
         const source = sourceById.get(item.sourceId);
         return (
           <Card key={item.id}>
@@ -71,7 +114,11 @@ export function ContentTab({ projectId }: { projectId: string }) {
                 <p className="text-sm text-zinc-400">{item.summary}</p>
               ) : null}
               <div className="flex items-center justify-between gap-3 border-t border-zinc-800 pt-2">
-                <span className="text-xs text-zinc-500">
+                <span
+                  className="text-xs text-zinc-500"
+                  title={formatDate(item.publishedAt ?? item.createdAt)}
+                >
+                  {item.publishedAt ? 'Posted' : 'Added'}{' '}
                   {formatRelative(item.publishedAt ?? item.createdAt)}
                 </span>
                 {source ? (
