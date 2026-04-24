@@ -1,0 +1,260 @@
+'use client';
+
+import { useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { PostDto, PostStatus, UpdatePostInput } from '@darketing/shared';
+import { ApiError, postsApi } from '@/lib/api';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  Skeleton,
+  Textarea,
+  useToast,
+} from '@/components/ui';
+import { PlatformPreview } from '@/components/posts/Previews';
+import { cn, formatRelative } from '@/lib/utils';
+
+const TWITTER_LIMIT = 280;
+const TWITTER_WARNING = 260;
+
+export default function PostEditorPage() {
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
+  const id = params?.id ?? '';
+  const qc = useQueryClient();
+  const { toast } = useToast();
+  const taRef = useRef<HTMLTextAreaElement>(null);
+
+  const post = useQuery({
+    queryKey: ['post', id],
+    queryFn: ({ signal }) => postsApi.get(id, signal),
+    enabled: !!id,
+  });
+
+  const [draft, setDraft] = useState('');
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    if (post.data && !hydrated) {
+      setDraft(post.data.editedContent ?? post.data.content);
+      setHydrated(true);
+    }
+  }, [post.data, hydrated]);
+
+  const dirty = useMemo(() => {
+    if (!post.data) return false;
+    const saved = post.data.editedContent ?? post.data.content;
+    return draft !== saved;
+  }, [draft, post.data]);
+
+  const patch = useMutation({
+    mutationFn: (input: UpdatePostInput) => postsApi.update(id, input),
+    onMutate: async (input) => {
+      await qc.cancelQueries({ queryKey: ['post', id] });
+      const previous = qc.getQueryData<PostDto>(['post', id]);
+      if (previous) {
+        qc.setQueryData<PostDto>(['post', id], {
+          ...previous,
+          ...(input.editedContent !== undefined
+            ? { editedContent: input.editedContent }
+            : {}),
+          ...(input.status ? { status: input.status } : {}),
+        });
+      }
+      return { previous };
+    },
+    onError: (err: unknown, _input, ctx) => {
+      if (ctx?.previous) qc.setQueryData(['post', id], ctx.previous);
+      const msg = err instanceof ApiError ? err.message : 'Save failed';
+      toast(msg, 'error');
+    },
+    onSuccess: (next) => {
+      qc.setQueryData(['post', id], next);
+      qc.invalidateQueries({ queryKey: ['posts'] });
+    },
+  });
+
+  const save = () => {
+    if (!dirty) return;
+    patch.mutate(
+      { editedContent: draft },
+      { onSuccess: () => toast('Saved', 'success') },
+    );
+  };
+
+  const approve = () => {
+    patch.mutate(
+      { status: 'APPROVED' },
+      { onSuccess: () => toast('Approved', 'success') },
+    );
+  };
+
+  const reject = () => {
+    patch.mutate(
+      { status: 'REJECTED' },
+      { onSuccess: () => toast('Rejected', 'info') },
+    );
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(draft);
+      toast('Copied to clipboard', 'success');
+    } catch {
+      toast('Copy failed', 'error');
+    }
+  };
+
+  // Keyboard shortcuts — re-registered each render so callbacks see fresh
+  // `draft` and `dirty` without a ref dance.
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const mod = e.metaKey || e.ctrlKey;
+      if (!mod) return;
+      const key = e.key.toLowerCase();
+      const taActive = document.activeElement === taRef.current;
+      if (key === 's') {
+        e.preventDefault();
+        save();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        approve();
+      } else if (key === 'c' && !taActive) {
+        // Only intercept ⌘C when the textarea is NOT focused so native copy
+        // of a selection inside the editor still works as expected.
+        e.preventDefault();
+        void copyToClipboard();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draft, dirty]);
+
+  if (post.isPending) {
+    return (
+      <main className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 px-6 py-10 lg:grid-cols-2">
+        <Skeleton className="h-[70vh] w-full" />
+        <Skeleton className="h-[70vh] w-full" />
+      </main>
+    );
+  }
+
+  if (post.isError || !post.data) {
+    return (
+      <main className="mx-auto w-full max-w-6xl px-6 py-10 text-center text-zinc-400">
+        <p>Couldn&apos;t load this post.</p>
+        <button
+          className="mt-3 text-accent-300 hover:underline"
+          onClick={() => router.back()}
+        >
+          ← Back
+        </button>
+      </main>
+    );
+  }
+
+  const p = post.data;
+  const isTwitter = p.platform === 'TWITTER';
+  const count = draft.length;
+
+  return (
+    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-10">
+      <nav className="flex items-center justify-between text-sm">
+        <Link
+          href={`/projects/${p.projectId}`}
+          className="text-zinc-400 hover:text-zinc-100"
+        >
+          ← Back to project
+        </Link>
+        <div className="flex items-center gap-2 text-xs text-zinc-500">
+          <Badge tone={isTwitter ? 'accent' : 'neutral'}>
+            {isTwitter ? 'X' : 'LinkedIn'}
+          </Badge>
+          <Badge tone={statusTone(p.status)}>{p.status}</Badge>
+          <span>Updated {formatRelative(p.updatedAt)}</span>
+        </div>
+      </nav>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-400">
+              Editor
+            </h2>
+            {isTwitter ? (
+              <span
+                className={cn(
+                  'text-xs tabular-nums',
+                  count >= TWITTER_LIMIT
+                    ? 'text-red-400'
+                    : count >= TWITTER_WARNING
+                      ? 'text-amber-400'
+                      : 'text-zinc-500',
+                )}
+              >
+                {count} / {TWITTER_LIMIT}
+              </span>
+            ) : null}
+          </div>
+          <Textarea
+            ref={taRef}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            rows={16}
+            className="min-h-[40vh] font-mono text-sm"
+            spellCheck
+          />
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={save} disabled={!dirty}>
+              Save (⌘S)
+            </Button>
+            <Button variant="secondary" onClick={approve}>
+              Approve (⌘↵)
+            </Button>
+            <Button variant="ghost" onClick={reject}>
+              Reject
+            </Button>
+            <Button variant="secondary" onClick={copyToClipboard}>
+              Copy
+            </Button>
+          </div>
+          <p className="text-xs text-zinc-500">
+            ⌘C copies the draft when the textarea is blurred. Native
+            selection copy inside the editor still works.
+          </p>
+        </section>
+
+        <section className="flex flex-col gap-3">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-400">
+            Preview
+          </h2>
+          <PlatformPreview post={p} content={draft} />
+          <Card>
+            <CardContent className="flex flex-col gap-1 text-xs text-zinc-400">
+              <span>Created {formatRelative(p.createdAt)}</span>
+              <span>
+                Source item{' '}
+                <code className="text-zinc-300">{p.contentItemId}</code>
+              </span>
+              {p.variant ? <span>Variant {p.variant}</span> : null}
+            </CardContent>
+          </Card>
+        </section>
+      </div>
+    </main>
+  );
+}
+
+function statusTone(
+  status: PostStatus,
+): 'success' | 'warning' | 'danger' | 'neutral' {
+  if (status === 'APPROVED') return 'success';
+  if (status === 'REJECTED') return 'danger';
+  if (status === 'SUGGESTED') return 'warning';
+  return 'neutral';
+}

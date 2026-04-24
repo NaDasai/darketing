@@ -1,0 +1,35 @@
+{
+  "name": "darketing",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Multi-domain content curation and AI-powered social post rewriter.",
+  "packageManager": "pnpm@9.12.3",
+  "engines": {
+    "node": ">=20.10.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently -n backend,worker,frontend -c blue,magenta,cyan \"pnpm dev:backend\" \"pnpm dev:worker\" \"pnpm dev:frontend\"",
+    "dev:backend": "pnpm --filter @darketing/backend dev",
+    "dev:worker": "pnpm --filter @darketing/backend dev:worker",
+    "dev:frontend": "pnpm --filter @darketing/frontend dev",
+    "build": "pnpm -r build",
+    "start:backend": "pnpm --filter @darketing/backend start",
+    "start:worker": "pnpm --filter @darketing/backend start:worker",
+    "seed": "pnpm --filter @darketing/backend seed",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\"",
+    "typecheck": "pnpm -r typecheck",
+    "clean": "pnpm -r exec rm -rf dist .next node_modules/.cache"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "concurrently": "^9.0.1",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  }
+}

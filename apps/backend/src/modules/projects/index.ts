@@ -1,0 +1,1 @@
+export { registerProjectsRoutes } from './routes';
