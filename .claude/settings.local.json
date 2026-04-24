@@ -59,7 +59,11 @@
       "Bash(lsof -nP -iTCP:6379)",
       "Bash(ps -o pid,etime,command -p 48690,48705)",
       "Bash(ps -ax -o pid,etime,command)",
-      "Bash(curl -sS -A 'DarketingRSSBot/0.1 \\(+https://github.com/\\)' --max-time 10 https://crypto.news/feed/)"
+      "Bash(curl -sS -A 'DarketingRSSBot/0.1 \\(+https://github.com/\\)' --max-time 10 https://crypto.news/feed/)",
+      "Bash(pnpm tsc *)",
+      "Bash(npx tsc *)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(pnpm --filter @darketing/shared build)"
     ]
   }
 }

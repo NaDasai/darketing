@@ -1,8 +1,8 @@
 import { z, type ZodTypeAny } from 'zod';
 import {
-  ContentItemDtoSchema,
   DiscoverFeedsResultSchema,
   JobStatusDtoSchema,
+  PaginatedContentSchema,
   PaginatedPostsSchema,
   PostDtoSchema,
   ProjectDtoSchema,
@@ -15,6 +15,7 @@ import {
   type DiscoverFeedsInput,
   type DiscoverFeedsResult,
   type JobStatusDto,
+  type PaginatedContent,
   type PaginatedPosts,
   type PostDto,
   type PostsQuery,
@@ -195,10 +196,14 @@ export const contentApi = {
     projectId: string,
     query: Partial<ContentQuery> = {},
     signal?: AbortSignal,
-  ): Promise<ContentItemDto[]> {
+  ): Promise<PaginatedContent> {
     return request(`/projects/${projectId}/content`, {
-      query: { selected: query.selected, limit: query.limit },
-      schema: z.array(ContentItemDtoSchema),
+      query: {
+        selected: query.selected,
+        limit: query.limit,
+        cursor: query.cursor,
+      },
+      schema: PaginatedContentSchema,
       signal,
     });
   },
@@ -252,6 +257,7 @@ export type {
   ContentItemDto,
   DiscoveredFeed,
   JobStatusDto,
+  PaginatedContent,
   PaginatedPosts,
   PostDto,
   ProjectDto,

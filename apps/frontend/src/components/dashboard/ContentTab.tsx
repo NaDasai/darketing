@@ -1,17 +1,19 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   contentApi,
   projectsApi,
   sourcesApi,
   type SourceDto,
 } from '@/lib/api';
-import { Badge, Card, CardContent, Select, Skeleton } from '@/components/ui';
+import { Badge, Button, Card, CardContent, Select, Skeleton } from '@/components/ui';
 import { cn, formatDate, formatRelative } from '@/lib/utils';
 
 type DurationFilter = 'ALL' | '1H' | '24H' | '7D' | '30D';
+
+const PAGE_SIZE = 20;
 
 const DURATION_OPTIONS: { value: DurationFilter; label: string; ms: number | null }[] = [
   { value: 'ALL', label: 'Any time', ms: null },
@@ -28,10 +30,16 @@ export function ContentTab({ projectId }: { projectId: string }) {
     new Set(),
   );
 
-  const content = useQuery({
+  const content = useInfiniteQuery({
     queryKey: ['content', projectId],
-    queryFn: ({ signal }) =>
-      contentApi.list(projectId, { limit: 50 }, signal),
+    queryFn: ({ pageParam, signal }) =>
+      contentApi.list(
+        projectId,
+        { limit: PAGE_SIZE, cursor: pageParam ?? undefined },
+        signal,
+      ),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 
   const sources = useQuery({
@@ -65,12 +73,17 @@ export function ContentTab({ projectId }: { projectId: string }) {
     setSelectedSourceIds(new Set());
   }
 
+  const allItems = useMemo(
+    () => content.data?.pages.flatMap((p) => p.items),
+    [content.data],
+  );
+
   const filteredContent = useMemo(() => {
-    if (!content.data) return undefined;
+    if (!allItems) return undefined;
     const windowMs = DURATION_OPTIONS.find((o) => o.value === duration)?.ms;
     const cutoff = windowMs == null ? null : Date.now() - windowMs;
     const sourceFilterActive = selectedSourceIds.size > 0;
-    return content.data.filter((item) => {
+    return allItems.filter((item) => {
       if (sourceFilterActive && !selectedSourceIds.has(item.sourceId)) {
         return false;
       }
@@ -80,7 +93,7 @@ export function ContentTab({ projectId }: { projectId: string }) {
       }
       return true;
     });
-  }, [content.data, duration, selectedSourceIds]);
+  }, [allItems, duration, selectedSourceIds]);
 
   const sourceFilterActive = selectedSourceIds.size > 0;
 
@@ -155,7 +168,7 @@ export function ContentTab({ projectId }: { projectId: string }) {
       filteredContent.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="py-10 text-center text-sm text-zinc-400">
-            {content.data && content.data.length > 0
+            {allItems && allItems.length > 0
               ? 'No content matches the current filters.'
               : 'No content yet. The worker will populate this tab after the next run.'}
           </CardContent>
@@ -227,6 +240,19 @@ export function ContentTab({ projectId }: { projectId: string }) {
           </Card>
         );
       })}
+
+      {content.hasNextPage ? (
+        <div className="flex justify-center pt-2">
+          <Button
+            variant="secondary"
+            onClick={() => content.fetchNextPage()}
+            isLoading={content.isFetchingNextPage}
+            disabled={content.isFetchingNextPage}
+          >
+            Load more
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }
