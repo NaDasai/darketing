@@ -191,7 +191,7 @@ async function detectTrendsFromRun(
   const items = await ContentItemModel.find({
     _id: { $in: itemIds },
     summary: { $ne: null },
-  }).select('title summary');
+  }).select('title summary sourceUrl');
 
   if (items.length < 2) {
     log.info(
@@ -214,9 +214,13 @@ async function detectTrendsFromRun(
     await TrendModel.create({
       projectId: project._id,
       generatedAt: new Date(),
-      itemCount: items.length,
       headline: report.headline,
       themes: report.themes,
+      items: items.map((it) => ({
+        contentItemId: it._id,
+        title: it.title,
+        sourceUrl: it.sourceUrl,
+      })),
     });
 
     return { generated: true, themes: report.themes.length };

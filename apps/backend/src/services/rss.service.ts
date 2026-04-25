@@ -1,6 +1,8 @@
 import Parser from 'rss-parser';
+import pLimit from 'p-limit';
 import { env } from '../config/env';
 import { logger } from '../lib/logger';
+import { scrapeArticle } from './scraper.service';
 
 export interface NormalizedItem {
   title: string;
@@ -68,24 +70,56 @@ function parsePublishedAt(item: FeedItem): Date | null {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
-function normalize(item: FeedItem): NormalizedItem | null {
+// First pass: derive what we can from the feed entry alone. Items missing
+// title/link are unrecoverable; items missing content are returned with
+// rawContent='' so the caller can decide whether to scrape.
+function normalizeFromFeed(item: FeedItem): NormalizedItem | null {
   const title = item.title?.trim();
   const link = item.link?.trim();
   if (!title || !link) return null;
 
-  const rawContent = pickContent(item);
-  if (rawContent.length < MIN_CONTENT_CHARS) return null;
-
   return {
     title,
     sourceUrl: link,
-    rawContent,
+    rawContent: pickContent(item),
     publishedAt: parsePublishedAt(item),
   };
 }
 
 function sleep(ms: number): Promise<void> {
   return new Promise((res) => setTimeout(res, ms));
+}
+
+async function backfillThinItems(
+  items: NormalizedItem[],
+  feedUrl: string,
+): Promise<NormalizedItem[]> {
+  const thin = items.filter((it) => it.rawContent.length < MIN_CONTENT_CHARS);
+  if (thin.length === 0) return items;
+
+  const limit = pLimit(env.SCRAPER_CONCURRENCY);
+  let scraped = 0;
+  let scrapedKept = 0;
+
+  await Promise.all(
+    thin.map((item) =>
+      limit(async () => {
+        const text = await scrapeArticle(item.sourceUrl);
+        scraped += 1;
+        if (text && text.length >= MIN_CONTENT_CHARS) {
+          item.rawContent = text;
+          scrapedKept += 1;
+        }
+      }),
+    ),
+  );
+
+  logger.debug(
+    { feedUrl, thinCount: thin.length, scraped, scrapedKept },
+    'RSS feed: scraping fallback ran',
+  );
+
+  return items;
 }
 
 export async function fetchFeed(url: string): Promise<NormalizedItem[]> {
@@ -95,12 +129,26 @@ export async function fetchFeed(url: string): Promise<NormalizedItem[]> {
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       const feed = await parser.parseURL(url);
-      const items = (feed.items ?? [])
-        .map(normalize)
+      // Two-stage filter: keep anything with title+link first, then either
+      // accept the feed-supplied content or attempt scraping for thin items.
+      const candidates = (feed.items ?? [])
+        .map(normalizeFromFeed)
         .filter((i): i is NormalizedItem => i !== null);
 
+      const enriched = await backfillThinItems(candidates, url);
+
+      const items = enriched.filter(
+        (i) => i.rawContent.length >= MIN_CONTENT_CHARS,
+      );
+
       logger.debug(
-        { url, total: feed.items?.length ?? 0, kept: items.length, attempt },
+        {
+          url,
+          total: feed.items?.length ?? 0,
+          candidates: candidates.length,
+          kept: items.length,
+          attempt,
+        },
         'RSS feed fetched',
       );
       return items;

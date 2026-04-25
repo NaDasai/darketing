@@ -63,7 +63,9 @@
       "Bash(pnpm tsc *)",
       "Bash(npx tsc *)",
       "Bash(echo \"EXIT:$?\")",
-      "Bash(pnpm --filter @darketing/shared build)"
+      "Bash(pnpm --filter @darketing/shared build)",
+      "Bash(pnpm tsx *)",
+      "Bash(pnpm add *)"
     ]
   }
 }

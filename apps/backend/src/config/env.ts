@@ -29,6 +29,9 @@ const envSchema = z.object({
   LLM_RATE_LIMIT_PER_SEC: z.coerce.number().positive().default(0.3),
   RSS_FETCH_TIMEOUT_MS: z.coerce.number().int().positive().default(10000),
   RSS_FETCH_RETRIES: z.coerce.number().int().nonnegative().default(2),
+  // Article scraping fallback used when an RSS item is title-only.
+  SCRAPER_TIMEOUT_MS: z.coerce.number().int().positive().default(15000),
+  SCRAPER_CONCURRENCY: z.coerce.number().int().positive().default(4),
   WORKER_CONCURRENCY: z.coerce.number().int().positive().default(2),
 });
 

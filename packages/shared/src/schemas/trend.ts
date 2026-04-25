@@ -6,13 +6,19 @@ export const TrendThemeSchema = z.object({
   description: z.string().min(1).max(2000),
 });
 
+export const TrendItemRefSchema = z.object({
+  contentItemId: ObjectIdSchema,
+  title: z.string(),
+  sourceUrl: z.string().url(),
+});
+
 export const TrendDtoSchema = z.object({
   id: ObjectIdSchema,
   projectId: ObjectIdSchema,
   generatedAt: IsoDateSchema,
-  itemCount: z.number().int().nonnegative(),
   headline: z.string(),
   themes: z.array(TrendThemeSchema),
+  items: z.array(TrendItemRefSchema),
   createdAt: IsoDateSchema,
 });
 
@@ -21,5 +27,6 @@ export const TrendsQuerySchema = z.object({
 });
 
 export type TrendTheme = z.infer<typeof TrendThemeSchema>;
+export type TrendItemRef = z.infer<typeof TrendItemRefSchema>;
 export type TrendDto = z.infer<typeof TrendDtoSchema>;
 export type TrendsQuery = z.infer<typeof TrendsQuerySchema>;

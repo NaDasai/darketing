@@ -8,10 +8,13 @@ export function getOrCreateModel<T>(name: string, schema: Schema<T>): Model<T> {
 }
 
 // Consistent JSON shape: expose `id` (string), hide `_id` and `__v`, and
-// convert any ObjectId fields we explicitly pass in `objectIdFields`.
+// convert any ObjectId fields we explicitly pass in `objectIdFields`. Pass
+// `extraTransform` to mutate the ret object after the base mapping runs —
+// useful for nested ObjectId conversion (e.g. items[].contentItemId).
 export function applyBaseToJSON<T>(
   schema: Schema<T>,
   objectIdFields: readonly string[] = [],
+  extraTransform?: (ret: Record<string, unknown>) => void,
 ): void {
   schema.set('toJSON', {
     virtuals: false,
@@ -24,6 +27,7 @@ export function applyBaseToJSON<T>(
       for (const field of objectIdFields) {
         if (ret[field] != null) ret[field] = String(ret[field]);
       }
+      extraTransform?.(ret);
       return ret;
     },
   });

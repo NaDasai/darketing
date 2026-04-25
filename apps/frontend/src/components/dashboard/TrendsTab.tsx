@@ -5,6 +5,14 @@ import { trendsApi } from '@/lib/api';
 import { Badge, Card, CardContent, Skeleton } from '@/components/ui';
 import { formatDate, formatRelative } from '@/lib/utils';
 
+function hostnameOf(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return '';
+  }
+}
+
 export function TrendsTab({ projectId }: { projectId: string }) {
   const trends = useQuery({
     queryKey: ['trends', projectId],
@@ -50,7 +58,7 @@ export function TrendsTab({ projectId }: { projectId: string }) {
                 </span>
               </div>
               <Badge tone="accent">
-                {report.itemCount} item{report.itemCount === 1 ? '' : 's'}
+                {report.items.length} item{report.items.length === 1 ? '' : 's'}
               </Badge>
             </div>
 
@@ -65,6 +73,41 @@ export function TrendsTab({ projectId }: { projectId: string }) {
                   </li>
                 ))}
               </ul>
+            ) : null}
+
+            {report.items.length > 0 ? (
+              <details className="border-t border-zinc-800 pt-3">
+                <summary className="cursor-pointer select-none text-xs font-medium uppercase tracking-wide text-zinc-400 hover:text-zinc-200">
+                  Items used ({report.items.length})
+                </summary>
+                <ul className="mt-2 flex flex-col gap-1.5">
+                  {report.items.map((item) => (
+                    <li
+                      key={item.contentItemId}
+                      className="flex items-baseline gap-2 text-sm"
+                    >
+                      <span
+                        className="text-xs text-zinc-600"
+                        aria-hidden
+                      >
+                        ◦
+                      </span>
+                      <a
+                        href={item.sourceUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="min-w-0 flex-1 truncate text-zinc-300 hover:text-accent-300"
+                        title={item.title}
+                      >
+                        {item.title}
+                      </a>
+                      <span className="shrink-0 text-xs text-zinc-600">
+                        {hostnameOf(item.sourceUrl)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </details>
             ) : null}
           </CardContent>
         </Card>
