@@ -1,0 +1,1 @@
+export { registerTrendsRoutes } from './routes';

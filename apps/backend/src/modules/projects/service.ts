@@ -10,6 +10,7 @@ import {
   GeneratedPostModel,
   ProjectModel,
   SourceModel,
+  TrendModel,
 } from '../../models';
 import { enqueuePipelineRun } from '../../jobs/queue';
 import {
@@ -111,6 +112,11 @@ export async function deleteProjectCascade(
     await SourceModel.deleteMany({ projectId });
   } catch (err) {
     deps.log.warn({ err, projectId: id }, 'cascade: Source delete failed');
+  }
+  try {
+    await TrendModel.deleteMany({ projectId });
+  } catch (err) {
+    deps.log.warn({ err, projectId: id }, 'cascade: Trend delete failed');
   }
 
   await project.deleteOne();

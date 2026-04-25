@@ -16,6 +16,7 @@ import {
   useToast,
 } from '@/components/ui';
 import { PostsTab } from '@/components/dashboard/PostsTab';
+import { TrendsTab } from '@/components/dashboard/TrendsTab';
 import { SourcesTab } from '@/components/dashboard/SourcesTab';
 import { ContentTab } from '@/components/dashboard/ContentTab';
 import { SettingsTab } from '@/components/dashboard/SettingsTab';
@@ -25,7 +26,7 @@ import {
 } from '@/components/dashboard/RunPipelineTracker';
 import { formatRelative } from '@/lib/utils';
 
-type TabKey = 'posts' | 'sources' | 'content' | 'settings';
+type TabKey = 'posts' | 'trends' | 'sources' | 'content' | 'settings';
 
 export default function ProjectDashboardPage() {
   const params = useParams<{ id: string }>();
@@ -184,6 +185,7 @@ export default function ProjectDashboardPage() {
       <Tabs value={active} onValueChange={(v) => setActive(v as TabKey)}>
         <TabList>
           <Tab value="posts">Posts</Tab>
+          <Tab value="trends">Trends</Tab>
           <Tab value="sources">Sources</Tab>
           <Tab value="content">Content</Tab>
           <Tab value="settings">Settings</Tab>
@@ -191,6 +193,9 @@ export default function ProjectDashboardPage() {
 
         <TabPanel value="posts">
           <PostsTab projectId={projectId} />
+        </TabPanel>
+        <TabPanel value="trends">
+          <TrendsTab projectId={projectId} />
         </TabPanel>
         <TabPanel value="sources">
           <SourcesTab projectId={projectId} />

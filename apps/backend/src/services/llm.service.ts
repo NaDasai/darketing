@@ -10,8 +10,10 @@ import { logger } from '../lib/logger';
 import { RateLimiter } from '../utils/rateLimiter';
 import {
   generatePostsPrompt,
+  generateTrendsPrompt,
   summarizePrompt,
   type ChatMessages,
+  type TrendItemForPrompt,
 } from './prompts';
 
 export interface GeneratePostsInput {
@@ -212,6 +214,77 @@ export async function generatePosts(
   } catch (err) {
     logger.warn({ err: (err as Error).message }, 'generatePosts: retrying in strict mode');
     return generatePostsOnce(input, true);
+  }
+}
+
+export interface GenerateTrendReportInput {
+  domain: string;
+  targetAudience: string;
+  items: readonly TrendItemForPrompt[];
+}
+
+const TrendReportSchema = z.object({
+  headline: z.string().min(1).max(500),
+  themes: z
+    .array(
+      z.object({
+        title: z.string().min(1).max(200),
+        description: z.string().min(1).max(2000),
+      }),
+    )
+    .min(1)
+    .max(10),
+});
+
+export type TrendReportOutput = z.infer<typeof TrendReportSchema>;
+
+async function generateTrendReportOnce(
+  input: GenerateTrendReportInput,
+  strict: boolean,
+): Promise<TrendReportOutput> {
+  const base = generateTrendsPrompt(input);
+  const system = strict
+    ? `${base.system}\n\nSTRICT MODE: your previous response was not valid JSON. Return ONLY the JSON object, nothing else, no fences.`
+    : base.system;
+
+  const raw = await chatCompletion(messagesFrom({ system, user: base.user }), {
+    jsonMode: true,
+    temperature: strict ? 0.2 : 0.5,
+  });
+
+  let parsedJson: unknown;
+  try {
+    parsedJson = JSON.parse(extractJsonBlock(raw));
+  } catch {
+    logger.warn({ raw }, 'LLM generateTrendReport: JSON.parse failed');
+    throw new Error('LLM returned non-JSON content');
+  }
+
+  const validated = TrendReportSchema.safeParse(parsedJson);
+  if (!validated.success) {
+    logger.warn(
+      { errors: validated.error.flatten(), raw },
+      'LLM generateTrendReport: schema validation failed',
+    );
+    throw new Error('LLM JSON did not match expected schema');
+  }
+  return validated.data;
+}
+
+export async function generateTrendReport(
+  input: GenerateTrendReportInput,
+): Promise<TrendReportOutput> {
+  if (input.items.length === 0) {
+    throw new Error('generateTrendReport: items is empty');
+  }
+  try {
+    return await generateTrendReportOnce(input, false);
+  } catch (err) {
+    logger.warn(
+      { err: (err as Error).message },
+      'generateTrendReport: retrying in strict mode',
+    );
+    return generateTrendReportOnce(input, true);
   }
 }
 

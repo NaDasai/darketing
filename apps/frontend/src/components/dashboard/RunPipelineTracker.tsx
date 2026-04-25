@@ -55,6 +55,7 @@ export function RunPipelineTracker({
 
     qc.invalidateQueries({ queryKey: ['project', projectId] });
     qc.invalidateQueries({ queryKey: ['content', projectId] });
+    qc.invalidateQueries({ queryKey: ['trends', projectId] });
     qc.invalidateQueries({ queryKey: ['posts'] });
 
     onTerminal?.({

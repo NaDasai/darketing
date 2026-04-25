@@ -7,6 +7,7 @@ import {
   PostDtoSchema,
   ProjectDtoSchema,
   SourceDtoSchema,
+  TrendDtoSchema,
   type ContentItemDto,
   type ContentQuery,
   type CreateProjectInput,
@@ -21,6 +22,8 @@ import {
   type PostsQuery,
   type ProjectDto,
   type SourceDto,
+  type TrendDto,
+  type TrendsQuery,
   type UpdatePostInput,
   type UpdateProjectInput,
 } from '@darketing/shared';
@@ -242,6 +245,22 @@ export const postsApi = {
   },
 };
 
+// ---------- Trends ----------
+
+export const trendsApi = {
+  list(
+    projectId: string,
+    query: Partial<TrendsQuery> = {},
+    signal?: AbortSignal,
+  ): Promise<TrendDto[]> {
+    return request(`/projects/${projectId}/trends`, {
+      query: { limit: query.limit },
+      schema: z.array(TrendDtoSchema),
+      signal,
+    });
+  },
+};
+
 // ---------- Jobs ----------
 
 export const jobsApi = {
@@ -262,4 +281,5 @@ export type {
   PostDto,
   ProjectDto,
   SourceDto,
+  TrendDto,
 };

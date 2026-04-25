@@ -10,6 +10,7 @@ import {
   GeneratedPostModel,
   ProjectModel,
   SourceModel,
+  TrendModel,
 } from '../models';
 import {
   PIPELINE_QUEUE_NAME,
@@ -20,7 +21,11 @@ import {
 import { startCronScheduler, stopCronScheduler } from '../jobs/cron';
 import { fetchFeed } from '../services/rss.service';
 import { urlHash } from '../services/dedup.service';
-import { summarize, generatePosts } from '../services/llm.service';
+import {
+  summarize,
+  generatePosts,
+  generateTrendReport,
+} from '../services/llm.service';
 import { score } from '../services/scoring.service';
 
 function isDuplicateKeyError(err: unknown): boolean {
@@ -177,6 +182,52 @@ async function selectTopAndGenerate(
   return { selected: topItems.length, postsCreated };
 }
 
+async function detectTrendsFromRun(
+  itemIds: Types.ObjectId[],
+  project: { _id: Types.ObjectId; domain: string; targetAudience: string },
+  log: PinoLogger,
+): Promise<{ generated: boolean; themes: number }> {
+  // Need at least 2 items with a summary for "trends" to be meaningful.
+  const items = await ContentItemModel.find({
+    _id: { $in: itemIds },
+    summary: { $ne: null },
+  }).select('title summary');
+
+  if (items.length < 2) {
+    log.info(
+      { count: items.length },
+      'pipeline: skipping trend detection (need >=2 summarized items)',
+    );
+    return { generated: false, themes: 0 };
+  }
+
+  try {
+    const report = await generateTrendReport({
+      domain: project.domain,
+      targetAudience: project.targetAudience,
+      items: items.map((it) => ({
+        title: it.title,
+        summary: it.summary ?? '',
+      })),
+    });
+
+    await TrendModel.create({
+      projectId: project._id,
+      generatedAt: new Date(),
+      itemCount: items.length,
+      headline: report.headline,
+      themes: report.themes,
+    });
+
+    return { generated: true, themes: report.themes.length };
+  } catch (err) {
+    // Trend detection is non-essential — log and continue so the run still
+    // surfaces as completed.
+    log.warn({ err }, 'pipeline: trend detection failed');
+    return { generated: false, themes: 0 };
+  }
+}
+
 async function runPipeline(job: Job<PipelineJobData>): Promise<void> {
   const { projectId, trigger } = job.data;
   const log = logger.child({ jobId: job.id, projectId, trigger });
@@ -221,6 +272,16 @@ async function runPipeline(job: Job<PipelineJobData>): Promise<void> {
   const { selected, postsCreated } = await selectTopAndGenerate(insertedIds, project, log);
   log.info({ selected, postsCreated }, 'pipeline: generation done');
 
+  await job.updateProgress({
+    phase: 'trends',
+    message: 'Detecting trends across new items',
+    newItems: insertedIds.length,
+    selected,
+    postsCreated,
+  });
+  const trendResult = await detectTrendsFromRun(insertedIds, project, log);
+  log.info(trendResult, 'pipeline: trend detection done');
+
   project.lastRunAt = new Date();
   await project.save();
 
@@ -230,6 +291,7 @@ async function runPipeline(job: Job<PipelineJobData>): Promise<void> {
     newItems: insertedIds.length,
     selected,
     postsCreated,
+    trendThemes: trendResult.themes,
   });
   log.info('pipeline: run complete');
 }
