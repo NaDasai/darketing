@@ -2,6 +2,18 @@ import { z } from 'zod';
 import { ToneSchema } from '../enums';
 import { IsoDateSchema, ObjectIdSchema } from './common';
 
+// Loose 5-field cron validation for fast client-side feedback. The backend
+// runs node-cron's stricter `cron.validate()` before persisting, so garbage
+// that slips past this regex is still rejected.
+const CRON_FIELD = "[^\\s]+";
+const CronExpressionSchema = z
+  .string()
+  .trim()
+  .regex(
+    new RegExp(`^${CRON_FIELD}(\\s+${CRON_FIELD}){4}$`),
+    'Must be a 5-field cron expression (e.g. "0 6 * * *")',
+  );
+
 export const ProjectCoreSchema = z.object({
   name: z.string().min(1).max(120),
   description: z.string().max(2000).default(''),
@@ -10,6 +22,7 @@ export const ProjectCoreSchema = z.object({
   domain: z.string().min(1).max(200),
   topNPerRun: z.number().int().min(1).max(50).default(5),
   isActive: z.boolean().default(true),
+  schedule: CronExpressionSchema.default('0 6 * * *'),
 });
 
 export const CreateProjectSchema = ProjectCoreSchema.extend({
@@ -17,6 +30,7 @@ export const CreateProjectSchema = ProjectCoreSchema.extend({
   topNPerRun: z.number().int().min(1).max(50).optional(),
   isActive: z.boolean().optional(),
   description: z.string().max(2000).optional(),
+  schedule: CronExpressionSchema.optional(),
 });
 
 export const UpdateProjectSchema = ProjectCoreSchema.partial();

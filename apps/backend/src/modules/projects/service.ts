@@ -12,6 +12,10 @@ import {
   SourceModel,
 } from '../../models';
 import { enqueuePipelineRun } from '../../jobs/queue';
+import {
+  InvalidCronExpressionError,
+  isValidCronExpression,
+} from '../../jobs/cron';
 
 // toJSON() returns a plain object shaped like ProjectDto thanks to
 // applyBaseToJSON on the schema. Fastify serializes Date → ISO string on the
@@ -21,6 +25,9 @@ function toDto(doc: { toJSON: () => unknown }): ProjectDto {
 }
 
 export async function createProject(input: CreateProjectInput): Promise<ProjectDto> {
+  if (input.schedule !== undefined && !isValidCronExpression(input.schedule)) {
+    throw new InvalidCronExpressionError(input.schedule);
+  }
   const created = await ProjectModel.create(input);
   return toDto(created);
 }
@@ -64,6 +71,9 @@ export async function updateProject(
   id: string,
   input: UpdateProjectInput,
 ): Promise<ProjectDto | null> {
+  if (input.schedule !== undefined && !isValidCronExpression(input.schedule)) {
+    throw new InvalidCronExpressionError(input.schedule);
+  }
   const updated = await ProjectModel.findByIdAndUpdate(id, input, {
     new: true,
     runValidators: true,

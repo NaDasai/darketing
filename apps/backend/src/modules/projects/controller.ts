@@ -5,6 +5,7 @@ import type {
 } from '@darketing/shared';
 import * as service from './service';
 import { ProjectInactiveError } from './service';
+import { InvalidCronExpressionError } from '../../jobs/cron';
 
 type IdParams = { id: string };
 
@@ -12,8 +13,15 @@ export async function createProjectHandler(
   req: FastifyRequest<{ Body: CreateProjectInput }>,
   reply: FastifyReply,
 ): Promise<void> {
-  const project = await service.createProject(req.body);
-  reply.code(201).send(project);
+  try {
+    const project = await service.createProject(req.body);
+    reply.code(201).send(project);
+  } catch (err) {
+    if (err instanceof InvalidCronExpressionError) {
+      throw req.server.httpErrors.badRequest(err.message);
+    }
+    throw err;
+  }
 }
 
 export async function listProjectsHandler(
@@ -37,9 +45,16 @@ export async function updateProjectHandler(
   req: FastifyRequest<{ Params: IdParams; Body: UpdateProjectInput }>,
   reply: FastifyReply,
 ): Promise<void> {
-  const project = await service.updateProject(req.params.id, req.body);
-  if (!project) throw req.server.httpErrors.notFound('Project not found');
-  reply.send(project);
+  try {
+    const project = await service.updateProject(req.params.id, req.body);
+    if (!project) throw req.server.httpErrors.notFound('Project not found');
+    reply.send(project);
+  } catch (err) {
+    if (err instanceof InvalidCronExpressionError) {
+      throw req.server.httpErrors.badRequest(err.message);
+    }
+    throw err;
+  }
 }
 
 export async function deleteProjectHandler(

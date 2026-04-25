@@ -17,7 +17,7 @@ import {
   createRedisConnection,
   type PipelineJobData,
 } from '../jobs/queue';
-import { startCronScheduler } from '../jobs/cron';
+import { startCronScheduler, stopCronScheduler } from '../jobs/cron';
 import { fetchFeed } from '../services/rss.service';
 import { urlHash } from '../services/dedup.service';
 import { summarize, generatePosts } from '../services/llm.service';
@@ -264,11 +264,11 @@ async function main(): Promise<void> {
     logger.error({ err }, 'worker: error event');
   });
 
-  const cronTask = startCronScheduler();
+  await startCronScheduler();
 
   const shutdown = async (signal: string): Promise<void> => {
     logger.info({ signal }, 'worker shutting down');
-    cronTask.stop();
+    stopCronScheduler();
     try {
       await worker.close();
     } catch (err) {

@@ -19,6 +19,7 @@ import {
   Textarea,
   useToast,
 } from '@/components/ui';
+import { ScheduleEditor } from './ScheduleEditor';
 
 export function SettingsTab({ project }: { project: ProjectDto }) {
   const [form, setForm] = useState<UpdateProjectInput>(pick(project));
@@ -128,6 +129,13 @@ export function SettingsTab({ project }: { project: ProjectDto }) {
               }
             />
           </Field>
+          <Field label="Pipeline schedule" error={errors.schedule}>
+            <ScheduleEditor
+              value={form.schedule ?? '0 6 * * *'}
+              onChange={(next) => setForm({ ...form, schedule: next })}
+              error={errors.schedule}
+            />
+          </Field>
           <label className="flex items-center gap-2 text-sm text-zinc-300">
             <input
               type="checkbox"
@@ -159,6 +167,7 @@ function pick(p: ProjectDto): UpdateProjectInput {
     domain: p.domain,
     topNPerRun: p.topNPerRun,
     isActive: p.isActive,
+    schedule: p.schedule,
   };
 }
 
