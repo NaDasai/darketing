@@ -109,6 +109,44 @@ export default function PostEditorPage() {
     }
   };
 
+  const shareToPlatform = async () => {
+    if (!post.data) return;
+    const text = draft.trim();
+    if (!text) {
+      toast('Nothing to share', 'error');
+      return;
+    }
+    const isX = post.data.platform === 'TWITTER';
+    const url = isX
+      ? `https://x.com/intent/post?text=${encodeURIComponent(text)}`
+      : `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
+
+    // LinkedIn's web compose doesn't reliably honor the `text` param across
+    // logged-in states, so always copy to clipboard so the user can paste in
+    // one keystroke. Harmless for X but the intent URL there fills text
+    // directly.
+    let copied = false;
+    try {
+      await navigator.clipboard.writeText(text);
+      copied = true;
+    } catch {
+      // Ignore — clipboard may be unavailable in some browsers/contexts.
+    }
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+
+    if (isX) {
+      toast('Opened X compose', 'info');
+    } else {
+      toast(
+        copied
+          ? 'Opened LinkedIn — text copied, paste if not pre-filled'
+          : 'Opened LinkedIn — paste your text into the composer',
+        'info',
+      );
+    }
+  };
+
   // Keyboard shortcuts — re-registered each render so callbacks see fresh
   // `draft` and `dirty` without a ref dance.
   useEffect(() => {
@@ -221,6 +259,13 @@ export default function PostEditorPage() {
             </Button>
             <Button variant="secondary" onClick={copyToClipboard}>
               Copy
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={shareToPlatform}
+              disabled={!draft.trim()}
+            >
+              {isTwitter ? 'Share on X' : 'Share on LinkedIn'}
             </Button>
           </div>
           <p className="text-xs text-zinc-500">
