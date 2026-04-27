@@ -113,7 +113,7 @@ export function NewProjectModal({
               ))}
             </Select>
           </Field>
-          <Field label="Top N per run" error={errors.topNPerRun}>
+          <Field label="Top picks per run" error={errors.topNPerRun}>
             <Input
               type="number"
               min={1}
@@ -127,6 +127,11 @@ export function NewProjectModal({
                 })
               }
             />
+            <p className="text-xs text-zinc-500">
+              The N best-scoring items from each run get turned into drafts
+              ({(form.topNPerRun ?? 5) * 2} per run with {form.topNPerRun ?? 5} picks
+              — one X + one LinkedIn each).
+            </p>
           </Field>
         </div>
         <Field label="Domain" error={errors.domain}>

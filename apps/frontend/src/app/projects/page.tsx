@@ -374,7 +374,7 @@ function ProjectCard({ project: p }: { project: ProjectDto }) {
           />
           <MiniStat
             icon={<Target className="h-3 w-3" />}
-            label="Top N"
+            label="Top picks"
             value={p.topNPerRun}
           />
           <MiniStat

@@ -147,7 +147,7 @@ export default function ProjectDashboardPage() {
           <div className="flex flex-wrap gap-2">
             <Badge tone="accent">{p.tone}</Badge>
             <Badge>{p.domain}</Badge>
-            <Badge>Top {p.topNPerRun}/run</Badge>
+            <Badge>{p.topNPerRun} picks/run</Badge>
             <Badge>{p.sourcesCount ?? 0} sources</Badge>
             <Badge>{p.contentCount ?? 0} items</Badge>
             <Badge>

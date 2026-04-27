@@ -95,7 +95,7 @@ export function SettingsTab({ project }: { project: ProjectDto }) {
                 ))}
               </Select>
             </Field>
-            <Field label="Top N per run" error={errors.topNPerRun}>
+            <Field label="Top picks per run" error={errors.topNPerRun}>
               <Input
                 type="number"
                 min={1}
@@ -111,6 +111,15 @@ export function SettingsTab({ project }: { project: ProjectDto }) {
                   })
                 }
               />
+              <p className="text-xs text-zinc-500">
+                After each run, the highest-scoring N new items are selected
+                and the AI writes one X post + one LinkedIn post for each.
+                With {form.topNPerRun ?? 5} picks you get up to{' '}
+                <span className="text-zinc-300 tabular-nums">
+                  {(form.topNPerRun ?? 5) * 2}
+                </span>{' '}
+                drafts to approve per run.
+              </p>
             </Field>
           </div>
           <Field label="Domain" error={errors.domain}>
