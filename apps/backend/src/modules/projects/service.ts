@@ -8,6 +8,7 @@ import type {
 import {
   ContentItemModel,
   GeneratedPostModel,
+  MarketReportModel,
   ProjectModel,
   SourceModel,
   TrendModel,
@@ -117,6 +118,14 @@ export async function deleteProjectCascade(
     await TrendModel.deleteMany({ projectId });
   } catch (err) {
     deps.log.warn({ err, projectId: id }, 'cascade: Trend delete failed');
+  }
+  try {
+    await MarketReportModel.deleteMany({ projectId });
+  } catch (err) {
+    deps.log.warn(
+      { err, projectId: id },
+      'cascade: MarketReport delete failed',
+    );
   }
 
   await project.deleteOne();

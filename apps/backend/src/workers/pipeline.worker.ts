@@ -8,6 +8,7 @@ import { logger } from '../lib/logger';
 import {
   ContentItemModel,
   GeneratedPostModel,
+  MarketReportModel,
   ProjectModel,
   SourceModel,
   TrendModel,
@@ -24,6 +25,7 @@ import { urlHash } from '../services/dedup.service';
 import {
   summarize,
   generatePosts,
+  generateMarketReport,
   generateTrendReport,
 } from '../services/llm.service';
 import { score } from '../services/scoring.service';
@@ -232,6 +234,74 @@ async function detectTrendsFromRun(
   }
 }
 
+async function detectMarketSignalsFromRun(
+  itemIds: Types.ObjectId[],
+  project: { _id: Types.ObjectId; domain: string; targetAudience: string },
+  log: PinoLogger,
+): Promise<{ generated: boolean; signals: number }> {
+  const items = await ContentItemModel.find({
+    _id: { $in: itemIds },
+    summary: { $ne: null },
+  }).select('title summary sourceUrl');
+
+  if (items.length < 2) {
+    log.info(
+      { count: items.length },
+      'pipeline: skipping market signals (need >=2 summarized items)',
+    );
+    return { generated: false, signals: 0 };
+  }
+
+  try {
+    const report = await generateMarketReport({
+      domain: project.domain,
+      targetAudience: project.targetAudience,
+      items: items.map((it) => ({
+        title: it.title,
+        summary: it.summary ?? '',
+      })),
+    });
+
+    // No usable signals — don't insert an empty report.
+    if (report.signals.length === 0) {
+      log.info('pipeline: no market signals detected');
+      return { generated: false, signals: 0 };
+    }
+
+    // The LLM returns 1-based indexes into the items array. Map those to the
+    // actual ContentItem ObjectIds and drop any out-of-range indexes silently.
+    const indexToId = new Map<number, Types.ObjectId>(
+      items.map((it, i) => [i + 1, it._id]),
+    );
+
+    await MarketReportModel.create({
+      projectId: project._id,
+      generatedAt: new Date(),
+      signals: report.signals.map((s) => ({
+        asset: s.asset,
+        assetClass: s.assetClass,
+        direction: s.direction,
+        confidence: s.confidence,
+        horizon: s.horizon,
+        rationale: s.rationale,
+        supportingContentItemIds: s.supportingItemIndexes
+          .map((idx) => indexToId.get(idx))
+          .filter((id): id is Types.ObjectId => id !== undefined),
+      })),
+      items: items.map((it) => ({
+        contentItemId: it._id,
+        title: it.title,
+        sourceUrl: it.sourceUrl,
+      })),
+    });
+
+    return { generated: true, signals: report.signals.length };
+  } catch (err) {
+    log.warn({ err }, 'pipeline: market signal detection failed');
+    return { generated: false, signals: 0 };
+  }
+}
+
 async function runPipeline(job: Job<PipelineJobData>): Promise<void> {
   const { projectId, trigger } = job.data;
   const log = logger.child({ jobId: job.id, projectId, trigger });
@@ -286,6 +356,21 @@ async function runPipeline(job: Job<PipelineJobData>): Promise<void> {
   const trendResult = await detectTrendsFromRun(insertedIds, project, log);
   log.info(trendResult, 'pipeline: trend detection done');
 
+  await job.updateProgress({
+    phase: 'signals',
+    message: 'Scanning for market signals',
+    newItems: insertedIds.length,
+    selected,
+    postsCreated,
+    trendThemes: trendResult.themes,
+  });
+  const signalResult = await detectMarketSignalsFromRun(
+    insertedIds,
+    project,
+    log,
+  );
+  log.info(signalResult, 'pipeline: market signal detection done');
+
   project.lastRunAt = new Date();
   await project.save();
 
@@ -296,6 +381,7 @@ async function runPipeline(job: Job<PipelineJobData>): Promise<void> {
     selected,
     postsCreated,
     trendThemes: trendResult.themes,
+    marketSignals: signalResult.signals,
   });
   log.info('pipeline: run complete');
 }

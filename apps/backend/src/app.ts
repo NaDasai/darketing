@@ -15,6 +15,7 @@ import { registerContentRoutes } from './modules/content';
 import { registerPostsRoutes } from './modules/posts';
 import { registerJobsRoutes } from './modules/jobs';
 import { registerTrendsRoutes } from './modules/trends';
+import { registerMarketSignalsRoutes } from './modules/marketSignals';
 
 type FastifyValidationError = {
   keyword?: string;
@@ -119,6 +120,7 @@ export async function buildApp() {
   await app.register(registerPostsRoutes);
   await app.register(registerJobsRoutes);
   await app.register(registerTrendsRoutes);
+  await app.register(registerMarketSignalsRoutes);
 
   return app;
 }

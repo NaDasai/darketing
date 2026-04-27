@@ -1,6 +1,9 @@
 import axios, { AxiosError, type AxiosInstance } from 'axios';
 import { z } from 'zod';
 import {
+  ASSET_CLASS_VALUES,
+  CONFIDENCE_VALUES,
+  DIRECTION_VALUES,
   PLATFORM_VALUES,
   type Platform,
   type Tone,
@@ -9,10 +12,12 @@ import { env } from '../config/env';
 import { logger } from '../lib/logger';
 import { RateLimiter } from '../utils/rateLimiter';
 import {
+  generateMarketSignalsPrompt,
   generatePostsPrompt,
   generateTrendsPrompt,
   summarizePrompt,
   type ChatMessages,
+  type MarketSignalItemForPrompt,
   type TrendItemForPrompt,
 } from './prompts';
 
@@ -285,6 +290,82 @@ export async function generateTrendReport(
       'generateTrendReport: retrying in strict mode',
     );
     return generateTrendReportOnce(input, true);
+  }
+}
+
+export interface GenerateMarketReportInput {
+  domain: string;
+  targetAudience: string;
+  items: readonly MarketSignalItemForPrompt[];
+}
+
+const MarketReportSchema = z.object({
+  signals: z
+    .array(
+      z.object({
+        asset: z.string().min(1).max(160),
+        assetClass: z.enum(ASSET_CLASS_VALUES),
+        direction: z.enum(DIRECTION_VALUES),
+        confidence: z.enum(CONFIDENCE_VALUES),
+        horizon: z.string().max(80).optional(),
+        rationale: z.string().min(1).max(2000),
+        // 1-based indexes into the input items list, mapped to ObjectIds by
+        // the worker after parsing.
+        supportingItemIndexes: z.array(z.number().int().positive()).default([]),
+      }),
+    )
+    .max(10),
+});
+
+export type MarketReportOutput = z.infer<typeof MarketReportSchema>;
+
+async function generateMarketReportOnce(
+  input: GenerateMarketReportInput,
+  strict: boolean,
+): Promise<MarketReportOutput> {
+  const base = generateMarketSignalsPrompt(input);
+  const system = strict
+    ? `${base.system}\n\nSTRICT MODE: your previous response was not valid JSON. Return ONLY the JSON object, nothing else, no fences.`
+    : base.system;
+
+  const raw = await chatCompletion(messagesFrom({ system, user: base.user }), {
+    jsonMode: true,
+    temperature: strict ? 0.2 : 0.4,
+  });
+
+  let parsedJson: unknown;
+  try {
+    parsedJson = JSON.parse(extractJsonBlock(raw));
+  } catch {
+    logger.warn({ raw }, 'LLM generateMarketReport: JSON.parse failed');
+    throw new Error('LLM returned non-JSON content');
+  }
+
+  const validated = MarketReportSchema.safeParse(parsedJson);
+  if (!validated.success) {
+    logger.warn(
+      { errors: validated.error.flatten(), raw },
+      'LLM generateMarketReport: schema validation failed',
+    );
+    throw new Error('LLM JSON did not match expected schema');
+  }
+  return validated.data;
+}
+
+export async function generateMarketReport(
+  input: GenerateMarketReportInput,
+): Promise<MarketReportOutput> {
+  if (input.items.length === 0) {
+    throw new Error('generateMarketReport: items is empty');
+  }
+  try {
+    return await generateMarketReportOnce(input, false);
+  } catch (err) {
+    logger.warn(
+      { err: (err as Error).message },
+      'generateMarketReport: retrying in strict mode',
+    );
+    return generateMarketReportOnce(input, true);
   }
 }
 

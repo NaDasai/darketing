@@ -9,3 +9,8 @@ export {
   type GenerateTrendsPromptInput,
   type TrendItemForPrompt,
 } from './trends';
+export {
+  generateMarketSignalsPrompt,
+  type GenerateMarketSignalsPromptInput,
+  type MarketSignalItemForPrompt,
+} from './marketSignals';

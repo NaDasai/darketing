@@ -2,6 +2,7 @@ import { z, type ZodTypeAny } from 'zod';
 import {
   DiscoverFeedsResultSchema,
   JobStatusDtoSchema,
+  MarketReportDtoSchema,
   PaginatedContentSchema,
   PaginatedPostsSchema,
   PostDtoSchema,
@@ -16,6 +17,8 @@ import {
   type DiscoverFeedsInput,
   type DiscoverFeedsResult,
   type JobStatusDto,
+  type MarketReportDto,
+  type MarketReportsQuery,
   type PaginatedContent,
   type PaginatedPosts,
   type PostDto,
@@ -261,6 +264,22 @@ export const trendsApi = {
   },
 };
 
+// ---------- Market Signals ----------
+
+export const marketSignalsApi = {
+  list(
+    projectId: string,
+    query: Partial<MarketReportsQuery> = {},
+    signal?: AbortSignal,
+  ): Promise<MarketReportDto[]> {
+    return request(`/projects/${projectId}/market-signals`, {
+      query: { limit: query.limit },
+      schema: z.array(MarketReportDtoSchema),
+      signal,
+    });
+  },
+};
+
 // ---------- Jobs ----------
 
 export const jobsApi = {
@@ -276,6 +295,7 @@ export type {
   ContentItemDto,
   DiscoveredFeed,
   JobStatusDto,
+  MarketReportDto,
   PaginatedContent,
   PaginatedPosts,
   PostDto,

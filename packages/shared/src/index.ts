@@ -6,3 +6,4 @@ export * from './schemas/content';
 export * from './schemas/post';
 export * from './schemas/job';
 export * from './schemas/trend';
+export * from './schemas/marketSignal';
