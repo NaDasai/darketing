@@ -1,5 +1,6 @@
 import { z, type ZodTypeAny } from 'zod';
 import {
+  AiEditPostResultSchema,
   DiscoverFeedsResultSchema,
   JobStatusDtoSchema,
   MarketReportDtoSchema,
@@ -9,6 +10,8 @@ import {
   ProjectDtoSchema,
   SourceDtoSchema,
   TrendDtoSchema,
+  type AiEditPostInput,
+  type AiEditPostResult,
   type ContentItemDto,
   type ContentQuery,
   type CreateProjectInput,
@@ -244,6 +247,14 @@ export const postsApi = {
       method: 'PATCH',
       body: input,
       schema: PostDtoSchema,
+    });
+  },
+
+  aiEdit(id: string, input: AiEditPostInput): Promise<AiEditPostResult> {
+    return request(`/posts/${id}/ai-edit`, {
+      method: 'POST',
+      body: input,
+      schema: AiEditPostResultSchema,
     });
   },
 };

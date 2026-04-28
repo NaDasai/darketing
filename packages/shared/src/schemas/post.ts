@@ -37,7 +37,18 @@ export const PaginatedPostsSchema = z.object({
   nextCursor: z.string().nullable(),
 });
 
+export const AiEditPostInputSchema = z.object({
+  instruction: z.string().trim().min(1).max(500),
+  currentContent: z.string().min(1).max(10000),
+});
+
+export const AiEditPostResultSchema = z.object({
+  content: z.string().min(1),
+});
+
 export type UpdatePostInput = z.infer<typeof UpdatePostSchema>;
 export type PostDto = z.infer<typeof PostDtoSchema>;
 export type PostsQuery = z.infer<typeof PostsQuerySchema>;
 export type PaginatedPosts = z.infer<typeof PaginatedPostsSchema>;
+export type AiEditPostInput = z.infer<typeof AiEditPostInputSchema>;
+export type AiEditPostResult = z.infer<typeof AiEditPostResultSchema>;

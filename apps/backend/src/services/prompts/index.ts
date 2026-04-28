@@ -3,6 +3,7 @@ export {
   type GeneratePostsPromptInput,
   type ChatMessages,
 } from './generatePosts';
+export { editPostPrompt, type EditPostPromptInput } from './editPost';
 export { summarizePrompt } from './summarize';
 export {
   generateTrendsPrompt,

@@ -1,11 +1,18 @@
 import mongoose, { type FilterQuery } from 'mongoose';
 import type {
+  AiEditPostInput,
+  AiEditPostResult,
   PaginatedPosts,
   PostDto,
   PostsQuery,
   UpdatePostInput,
 } from '@darketing/shared';
-import { GeneratedPostModel, type IGeneratedPost } from '../../models';
+import {
+  GeneratedPostModel,
+  ProjectModel,
+  type IGeneratedPost,
+} from '../../models';
+import { editPost as llmEditPost } from '../../services/llm.service';
 
 function toDto(doc: { toJSON: () => unknown }): PostDto {
   return doc.toJSON() as PostDto;
@@ -61,4 +68,40 @@ export async function updatePost(
     runValidators: true,
   });
   return updated ? toDto(updated) : null;
+}
+
+export class PostNotFoundError extends Error {
+  constructor() {
+    super('Post not found');
+    this.name = 'PostNotFoundError';
+  }
+}
+
+export class ProjectMissingError extends Error {
+  constructor() {
+    super('Project for this post no longer exists');
+    this.name = 'ProjectMissingError';
+  }
+}
+
+export async function aiEditPost(
+  id: string,
+  input: AiEditPostInput,
+): Promise<AiEditPostResult> {
+  const post = await GeneratedPostModel.findById(id);
+  if (!post) throw new PostNotFoundError();
+
+  const project = await ProjectModel.findById(post.projectId);
+  if (!project) throw new ProjectMissingError();
+
+  const content = await llmEditPost({
+    currentContent: input.currentContent,
+    instruction: input.instruction,
+    platform: post.platform,
+    tone: project.tone,
+    targetAudience: project.targetAudience,
+    domain: project.domain,
+  });
+
+  return { content };
 }

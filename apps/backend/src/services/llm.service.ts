@@ -12,11 +12,13 @@ import { env } from '../config/env';
 import { logger } from '../lib/logger';
 import { RateLimiter } from '../utils/rateLimiter';
 import {
+  editPostPrompt,
   generateMarketSignalsPrompt,
   generatePostsPrompt,
   generateTrendsPrompt,
   summarizePrompt,
   type ChatMessages,
+  type EditPostPromptInput,
   type MarketSignalItemForPrompt,
   type TrendItemForPrompt,
 } from './prompts';
@@ -367,6 +369,30 @@ export async function generateMarketReport(
     );
     return generateMarketReportOnce(input, true);
   }
+}
+
+export type EditPostInput = EditPostPromptInput;
+
+export async function editPost(input: EditPostInput): Promise<string> {
+  if (!input.currentContent.trim()) {
+    throw new Error('editPost: currentContent is empty');
+  }
+  if (!input.instruction.trim()) {
+    throw new Error('editPost: instruction is empty');
+  }
+
+  const chat = editPostPrompt(input);
+  const out = await chatCompletion(messagesFrom(chat), {
+    jsonMode: false,
+    temperature: 0.6,
+  });
+
+  const cleaned = out
+    .replace(/^```[a-z]*\s*/i, '')
+    .replace(/```$/, '')
+    .trim();
+  if (!cleaned) throw new Error('editPost: LLM returned empty content');
+  return cleaned;
 }
 
 export async function summarize(rawContent: string): Promise<string> {

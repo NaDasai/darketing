@@ -11,12 +11,21 @@ import {
   Button,
   Card,
   CardContent,
+  Input,
   Skeleton,
   Textarea,
   useToast,
 } from '@/components/ui';
 import { PlatformPreview } from '@/components/posts/Previews';
 import { cn, formatRelative } from '@/lib/utils';
+
+const AI_EDIT_PRESETS = [
+  'Make it shorter',
+  'More punchy',
+  'Less formal',
+  'Tighten the hook',
+  'Add a clear takeaway',
+] as const;
 
 const TWITTER_LIMIT = 280;
 const TWITTER_WARNING = 260;
@@ -37,6 +46,8 @@ export default function PostEditorPage() {
 
   const [draft, setDraft] = useState('');
   const [hydrated, setHydrated] = useState(false);
+  const [instruction, setInstruction] = useState('');
+  const [previousDraft, setPreviousDraft] = useState<string | null>(null);
 
   useEffect(() => {
     if (post.data && !hydrated) {
@@ -78,11 +89,50 @@ export default function PostEditorPage() {
     },
   });
 
+  const aiEdit = useMutation({
+    mutationFn: (vars: { instruction: string; currentContent: string }) =>
+      postsApi.aiEdit(id, vars),
+    onSuccess: (result, vars) => {
+      setPreviousDraft(vars.currentContent);
+      setDraft(result.content);
+      toast('AI rewrite ready — review and save', 'success');
+    },
+    onError: (err: unknown) => {
+      const msg = err instanceof ApiError ? err.message : 'AI edit failed';
+      toast(msg, 'error');
+    },
+  });
+
+  const runAiEdit = (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed) {
+      toast('Type an instruction first', 'error');
+      return;
+    }
+    if (!draft.trim()) {
+      toast('Nothing to rewrite', 'error');
+      return;
+    }
+    aiEdit.mutate({ instruction: trimmed, currentContent: draft });
+  };
+
+  const undoAiEdit = () => {
+    if (previousDraft === null) return;
+    setDraft(previousDraft);
+    setPreviousDraft(null);
+    toast('Reverted AI rewrite', 'info');
+  };
+
   const save = () => {
     if (!dirty) return;
     patch.mutate(
       { editedContent: draft },
-      { onSuccess: () => toast('Saved', 'success') },
+      {
+        onSuccess: () => {
+          setPreviousDraft(null);
+          toast('Saved', 'success');
+        },
+      },
     );
   };
 
@@ -242,7 +292,10 @@ export default function PostEditorPage() {
           <Textarea
             ref={taRef}
             value={draft}
-            onChange={(e) => setDraft(e.target.value)}
+            onChange={(e) => {
+              setDraft(e.target.value);
+              if (previousDraft !== null) setPreviousDraft(null);
+            }}
             rows={16}
             className="min-h-[40vh] font-mono text-sm"
             spellCheck
@@ -272,6 +325,64 @@ export default function PostEditorPage() {
             ⌘C copies the draft when the textarea is blurred. Native
             selection copy inside the editor still works.
           </p>
+
+          <div className="mt-2 flex flex-col gap-3 rounded-md border border-zinc-800 bg-zinc-900/40 p-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-medium uppercase tracking-wide text-zinc-400">
+                Edit with AI
+              </h3>
+              {previousDraft !== null ? (
+                <button
+                  type="button"
+                  onClick={undoAiEdit}
+                  className="text-xs text-accent-300 hover:underline"
+                >
+                  Undo rewrite
+                </button>
+              ) : null}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {AI_EDIT_PRESETS.map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => runAiEdit(preset)}
+                  disabled={aiEdit.isPending}
+                  className={cn(
+                    'rounded-full border border-zinc-800 bg-zinc-950 px-3 py-1 text-xs text-zinc-300 transition',
+                    'hover:border-accent-400/60 hover:text-zinc-100',
+                    'disabled:cursor-not-allowed disabled:opacity-50',
+                  )}
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <Input
+                value={instruction}
+                onChange={(e) => setInstruction(e.target.value)}
+                placeholder="e.g. Lead with the number, drop the second paragraph"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !aiEdit.isPending) {
+                    e.preventDefault();
+                    runAiEdit(instruction);
+                  }
+                }}
+                disabled={aiEdit.isPending}
+              />
+              <Button
+                onClick={() => runAiEdit(instruction)}
+                disabled={aiEdit.isPending || !instruction.trim()}
+              >
+                {aiEdit.isPending ? 'Rewriting…' : 'Apply'}
+              </Button>
+            </div>
+            <p className="text-xs text-zinc-500">
+              The rewrite replaces your draft. Save to persist, or undo to
+              revert.
+            </p>
+          </div>
         </section>
 
         <section className="flex flex-col gap-3">

@@ -1,7 +1,15 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { PostsQuery, UpdatePostInput } from '@darketing/shared';
+import type {
+  AiEditPostInput,
+  PostsQuery,
+  UpdatePostInput,
+} from '@darketing/shared';
 import * as service from './service';
-import { InvalidCursorError } from './service';
+import {
+  InvalidCursorError,
+  PostNotFoundError,
+  ProjectMissingError,
+} from './service';
 
 type IdParams = { id: string };
 
@@ -36,4 +44,22 @@ export async function updatePostHandler(
   const post = await service.updatePost(req.params.id, req.body);
   if (!post) throw req.server.httpErrors.notFound('Post not found');
   reply.send(post);
+}
+
+export async function aiEditPostHandler(
+  req: FastifyRequest<{ Params: IdParams; Body: AiEditPostInput }>,
+  reply: FastifyReply,
+): Promise<void> {
+  try {
+    const result = await service.aiEditPost(req.params.id, req.body);
+    reply.send(result);
+  } catch (err) {
+    if (err instanceof PostNotFoundError) {
+      throw req.server.httpErrors.notFound(err.message);
+    }
+    if (err instanceof ProjectMissingError) {
+      throw req.server.httpErrors.conflict(err.message);
+    }
+    throw err;
+  }
 }

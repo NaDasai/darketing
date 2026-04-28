@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import {
+  AiEditPostInputSchema,
   ObjectIdSchema,
   PostsQuerySchema,
   UpdatePostSchema,
@@ -26,6 +27,12 @@ const postsRoutes: FastifyPluginAsyncZod = async (fastify) => {
     '/posts/:id',
     { schema: { params: IdParamsSchema, body: UpdatePostSchema } },
     controller.updatePostHandler,
+  );
+
+  fastify.post(
+    '/posts/:id/ai-edit',
+    { schema: { params: IdParamsSchema, body: AiEditPostInputSchema } },
+    controller.aiEditPostHandler,
   );
 };
 
