@@ -69,7 +69,7 @@ export default function ProjectDashboardPage() {
   });
 
   const handleRunTerminal = (result: RunTerminalResult) => {
-    if (runningToastIdRef.current != null) {
+    if (runningToastIdRef.current !== null) {
       dismiss(runningToastIdRef.current);
       runningToastIdRef.current = null;
     }

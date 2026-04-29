@@ -220,7 +220,6 @@ export default function PostEditorPage() {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft, dirty]);
 
   if (post.isPending) {

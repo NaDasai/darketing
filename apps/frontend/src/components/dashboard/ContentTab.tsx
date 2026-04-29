@@ -78,13 +78,13 @@ export function ContentTab({ projectId }: { projectId: string }) {
     const items = content.data?.items;
     if (!items) return undefined;
     const windowMs = DURATION_OPTIONS.find((o) => o.value === duration)?.ms;
-    const cutoff = windowMs == null ? null : Date.now() - windowMs;
+    const cutoff = windowMs ? Date.now() - windowMs : null;
     const sourceFilterActive = selectedSourceIds.size > 0;
     return items.filter((item) => {
       if (sourceFilterActive && !selectedSourceIds.has(item.sourceId)) {
         return false;
       }
-      if (cutoff != null) {
+      if (cutoff !== null) {
         const ts = new Date(item.publishedAt ?? item.createdAt).getTime();
         if (!Number.isFinite(ts) || ts < cutoff) return false;
       }
@@ -180,7 +180,7 @@ export function ContentTab({ projectId }: { projectId: string }) {
       {filteredContent?.map((item) => {
         const source = sourceById.get(item.sourceId);
         const isFromLastRun =
-          lastRunStartedAtMs != null &&
+          lastRunStartedAtMs !== null &&
           new Date(item.createdAt).getTime() >= lastRunStartedAtMs;
         return (
           <Card

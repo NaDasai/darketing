@@ -145,7 +145,6 @@ export function ScheduleEditor({
     }
     // We intentionally exclude state/customExpr — only react to outside
     // changes to `value`.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   function emit(next: ParsedExpr, nextCustom = customExpr) {
