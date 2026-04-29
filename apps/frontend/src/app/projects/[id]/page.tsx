@@ -115,7 +115,7 @@ export default function ProjectDashboardPage() {
 
   if (project.isError || !project.data) {
     return (
-      <main className="mx-auto w-full max-w-6xl px-6 py-10 text-center text-zinc-400">
+      <main className="mx-auto w-full max-w-6xl px-6 py-10 text-center text-zinc-600 dark:text-zinc-400">
         <p>Could not load this project.</p>
         <Link
           className="mt-3 inline-block text-accent-300 hover:underline"
@@ -134,16 +134,16 @@ export default function ProjectDashboardPage() {
       <nav className="mb-4 text-sm">
         <Link
           href="/projects"
-          className="text-zinc-400 hover:text-zinc-100"
+          className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
         >
           ← Projects
         </Link>
       </nav>
 
-      <header className="mb-6 flex flex-col gap-3 border-b border-zinc-800 pb-5 md:flex-row md:items-end md:justify-between">
+      <header className="mb-6 flex flex-col gap-3 border-b border-zinc-200 dark:border-zinc-800 pb-5 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-semibold text-zinc-100">{p.name}</h1>
+            <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">{p.name}</h1>
             {p.isActive ? (
               <Badge tone="success">Active</Badge>
             ) : (
@@ -151,7 +151,7 @@ export default function ProjectDashboardPage() {
             )}
           </div>
           {p.description ? (
-            <p className="max-w-2xl text-sm text-zinc-400">{p.description}</p>
+            <p className="max-w-2xl text-sm text-zinc-600 dark:text-zinc-400">{p.description}</p>
           ) : null}
           <div className="flex flex-wrap gap-2">
             <Badge tone="accent">{p.tone}</Badge>

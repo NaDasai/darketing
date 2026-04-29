@@ -150,18 +150,18 @@ export function NewProjectModal({
             placeholder="backend engineers building side-projects"
           />
         </Field>
-        <label className="flex items-center gap-2 text-sm text-zinc-300">
+        <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
           <input
             type="checkbox"
             checked={form.isActive ?? true}
             onChange={(e) =>
               setForm({ ...form, isActive: e.target.checked })
             }
-            className="h-4 w-4 rounded border-zinc-700 bg-zinc-950 accent-accent-500"
+            className="h-4 w-4 rounded border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 accent-accent-500"
           />
           Run on schedule
         </label>
-        <div className="mt-2 flex items-center justify-end gap-2 border-t border-zinc-800 pt-4">
+        <div className="mt-2 flex items-center justify-end gap-2 border-t border-zinc-200 dark:border-zinc-800 pt-4">
           <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>
@@ -185,7 +185,7 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-medium uppercase tracking-wide text-zinc-400">
+      <label className="text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
         {label}
       </label>
       {children}

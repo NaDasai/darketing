@@ -233,7 +233,7 @@ export default function PostEditorPage() {
 
   if (post.isError || !post.data) {
     return (
-      <main className="mx-auto w-full max-w-6xl px-6 py-10 text-center text-zinc-400">
+      <main className="mx-auto w-full max-w-6xl px-6 py-10 text-center text-zinc-600 dark:text-zinc-400">
         <p>Couldn&apos;t load this post.</p>
         <button
           className="mt-3 text-accent-300 hover:underline"
@@ -254,7 +254,7 @@ export default function PostEditorPage() {
       <nav className="flex items-center justify-between text-sm">
         <Link
           href={`/projects/${p.projectId}`}
-          className="text-zinc-400 hover:text-zinc-100"
+          className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
         >
           ← Back to project
         </Link>
@@ -270,7 +270,7 @@ export default function PostEditorPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <section className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-400">
+            <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
               Editor
             </h2>
             {isTwitter ? (
@@ -325,9 +325,9 @@ export default function PostEditorPage() {
             selection copy inside the editor still works.
           </p>
 
-          <div className="mt-2 flex flex-col gap-3 rounded-md border border-zinc-800 bg-zinc-900/40 p-3">
+          <div className="mt-2 flex flex-col gap-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white/40 dark:bg-zinc-900/40 p-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-medium uppercase tracking-wide text-zinc-400">
+              <h3 className="text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
                 Edit with AI
               </h3>
               {previousDraft !== null ? (
@@ -348,8 +348,8 @@ export default function PostEditorPage() {
                   onClick={() => runAiEdit(preset)}
                   disabled={aiEdit.isPending}
                   className={cn(
-                    'rounded-full border border-zinc-800 bg-zinc-950 px-3 py-1 text-xs text-zinc-300 transition',
-                    'hover:border-accent-400/60 hover:text-zinc-100',
+                    'rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-1 text-xs text-zinc-700 dark:text-zinc-300 transition',
+                    'hover:border-accent-400/60 hover:text-zinc-900 dark:hover:text-zinc-100',
                     'disabled:cursor-not-allowed disabled:opacity-50',
                   )}
                 >
@@ -385,16 +385,16 @@ export default function PostEditorPage() {
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-400">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
             Preview
           </h2>
           <PlatformPreview post={p} content={draft} />
           <Card>
-            <CardContent className="flex flex-col gap-1 text-xs text-zinc-400">
+            <CardContent className="flex flex-col gap-1 text-xs text-zinc-600 dark:text-zinc-400">
               <span>Created {formatRelative(p.createdAt)}</span>
               <span>
                 Source item{' '}
-                <code className="text-zinc-300">{p.contentItemId}</code>
+                <code className="text-zinc-700 dark:text-zinc-300">{p.contentItemId}</code>
               </span>
               {p.variant ? <span>Variant {p.variant}</span> : null}
             </CardContent>

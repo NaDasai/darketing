@@ -75,7 +75,7 @@ export function PostsTab({ projectId }: { projectId: string }) {
       posts.data &&
       posts.data.items.length === 0 ? (
         <Card className="border-dashed">
-          <CardContent className="py-10 text-center text-sm text-zinc-400">
+          <CardContent className="py-10 text-center text-sm text-zinc-600 dark:text-zinc-400">
             No posts yet for this filter. Try another status, or run the
             pipeline to generate suggestions.
           </CardContent>
@@ -107,7 +107,7 @@ export function PostsTab({ projectId }: { projectId: string }) {
                       {formatRelative(post.createdAt)}
                     </span>
                   </div>
-                  <p className="line-clamp-4 whitespace-pre-wrap text-sm text-zinc-200">
+                  <p className="line-clamp-4 whitespace-pre-wrap text-sm text-zinc-800 dark:text-zinc-200">
                     {post.editedContent ?? post.content}
                   </p>
                 </CardContent>

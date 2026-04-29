@@ -91,7 +91,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               t.variant === 'error' &&
                 'border-red-700 bg-red-950/90 text-red-100',
               t.variant === 'info' &&
-                'border-zinc-700 bg-zinc-900/90 text-zinc-100',
+                'border-zinc-300 dark:border-zinc-700 bg-white/90 dark:bg-zinc-900/90 text-zinc-900 dark:text-zinc-100',
             )}
           >
             {t.message}

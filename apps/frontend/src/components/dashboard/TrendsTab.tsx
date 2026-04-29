@@ -32,7 +32,7 @@ export function TrendsTab({ projectId }: { projectId: string }) {
   if (!trends.data || trends.data.length === 0) {
     return (
       <Card className="border-dashed">
-        <CardContent className="py-10 text-center text-sm text-zinc-400">
+        <CardContent className="py-10 text-center text-sm text-zinc-600 dark:text-zinc-400">
           No trend reports yet. After the next pipeline run, the AI will
           analyze the new items and post a short report here.
         </CardContent>
@@ -47,7 +47,7 @@ export function TrendsTab({ projectId }: { projectId: string }) {
           <CardContent className="flex flex-col gap-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="flex flex-col gap-1">
-                <h3 className="text-base font-medium text-zinc-100">
+                <h3 className="text-base font-medium text-zinc-900 dark:text-zinc-100">
                   {report.headline}
                 </h3>
                 <span
@@ -63,21 +63,21 @@ export function TrendsTab({ projectId }: { projectId: string }) {
             </div>
 
             {report.themes.length > 0 ? (
-              <ul className="flex flex-col gap-3 border-t border-zinc-800 pt-3">
+              <ul className="flex flex-col gap-3 border-t border-zinc-200 dark:border-zinc-800 pt-3">
                 {report.themes.map((theme, i) => (
                   <li key={i} className="flex flex-col gap-1">
-                    <span className="text-sm font-medium text-zinc-100">
+                    <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                       {theme.title}
                     </span>
-                    <p className="text-sm text-zinc-400">{theme.description}</p>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">{theme.description}</p>
                   </li>
                 ))}
               </ul>
             ) : null}
 
             {report.items.length > 0 ? (
-              <details className="border-t border-zinc-800 pt-3">
-                <summary className="cursor-pointer select-none text-xs font-medium uppercase tracking-wide text-zinc-400 hover:text-zinc-200">
+              <details className="border-t border-zinc-200 dark:border-zinc-800 pt-3">
+                <summary className="cursor-pointer select-none text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200">
                   Items used ({report.items.length})
                 </summary>
                 <ul className="mt-2 flex flex-col gap-1.5">
@@ -87,7 +87,7 @@ export function TrendsTab({ projectId }: { projectId: string }) {
                       className="flex items-baseline gap-2 text-sm"
                     >
                       <span
-                        className="text-xs text-zinc-600"
+                        className="text-xs text-zinc-400 dark:text-zinc-600"
                         aria-hidden
                       >
                         ◦
@@ -96,12 +96,12 @@ export function TrendsTab({ projectId }: { projectId: string }) {
                         href={item.sourceUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="min-w-0 flex-1 truncate text-zinc-300 hover:text-accent-300"
+                        className="min-w-0 flex-1 truncate text-zinc-700 dark:text-zinc-300 hover:text-accent-300"
                         title={item.title}
                       >
                         {item.title}
                       </a>
-                      <span className="shrink-0 text-xs text-zinc-600">
+                      <span className="shrink-0 text-xs text-zinc-400 dark:text-zinc-600">
                         {hostnameOf(item.sourceUrl)}
                       </span>
                     </li>

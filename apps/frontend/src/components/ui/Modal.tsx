@@ -47,14 +47,14 @@ export function Modal({
       />
       <div
         className={cn(
-          'relative z-10 w-full rounded-lg border border-zinc-800 bg-zinc-900 shadow-2xl',
+          'relative z-10 w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl',
           maxWidth,
         )}
       >
-        <div className="border-b border-zinc-800 px-6 py-4">
-          <h2 className="text-lg font-semibold text-zinc-100">{title}</h2>
+        <div className="border-b border-zinc-200 dark:border-zinc-800 px-6 py-4">
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{title}</h2>
           {description ? (
-            <p className="mt-1 text-sm text-zinc-400">{description}</p>
+            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{description}</p>
           ) : null}
         </div>
         <div className="px-6 py-5">{children}</div>

@@ -124,7 +124,7 @@ export default function ProjectsPage() {
             <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
               <div className="flex flex-col gap-1">
                 <SectionEyebrow num="02" label="Your projects" />
-                <h2 className="text-2xl font-semibold tracking-tight text-zinc-100">
+                <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
                   Active pipelines
                 </h2>
               </div>
@@ -190,7 +190,7 @@ function HeroBackdrop() {
             'radial-gradient(ellipse at center top, black 30%, transparent 70%)',
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/0 via-zinc-950/40 to-zinc-950" />
+      <div className="absolute inset-0 bg-gradient-to-b from-zinc-50/0 dark:from-zinc-950/0 via-zinc-50/40 dark:via-zinc-950/40 to-zinc-50 dark:to-zinc-950" />
     </div>
   );
 }
@@ -224,14 +224,14 @@ function Hero({
           lastRunAt={lastRunAt}
           className="mt-4"
         />
-        <h1 className="mt-6 text-[42px] font-semibold tracking-tight text-zinc-50 md:text-[58px] md:leading-[1.02]">
+        <h1 className="mt-6 text-[42px] font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 md:text-[58px] md:leading-[1.02]">
           Read less.
           <br />
           <span className="bg-gradient-to-r from-accent-300 via-accent-400 to-fuchsia-400 bg-clip-text text-transparent">
             Post smarter.
           </span>
         </h1>
-        <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-zinc-400">
+        <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-zinc-600 dark:text-zinc-400">
           We curate the news, draft your posts, and let you approve in
           seconds.
         </p>
@@ -251,7 +251,7 @@ function SectionEyebrow({ num, label }: { num: string; label: string }) {
   return (
     <p className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-zinc-500">
       <span className="text-accent-400">{num}</span>
-      <span className="h-px w-6 bg-zinc-800" />
+      <span className="h-px w-6 bg-zinc-100 dark:bg-zinc-800" />
       <span>{label}</span>
     </p>
   );
@@ -274,11 +274,11 @@ function LiveChip({
     return (
       <span
         className={cn(
-          'inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/60 px-3 py-1.5 text-xs text-zinc-400',
+          'inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 px-3 py-1.5 text-xs text-zinc-600 dark:text-zinc-400',
           className,
         )}
       >
-        <span className="h-1.5 w-1.5 rounded-full bg-zinc-600" />
+        <span className="h-1.5 w-1.5 rounded-full bg-zinc-300 dark:bg-zinc-600" />
         Loading…
       </span>
     );
@@ -288,7 +288,7 @@ function LiveChip({
     return (
       <span
         className={cn(
-          'inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/60 px-3 py-1.5 text-xs text-zinc-400',
+          'inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 px-3 py-1.5 text-xs text-zinc-600 dark:text-zinc-400',
           className,
         )}
       >
@@ -305,7 +305,7 @@ function LiveChip({
         'inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs',
         isHealthy
           ? 'border-emerald-700/50 bg-emerald-950/40 text-emerald-200'
-          : 'border-zinc-800 bg-zinc-900/60 text-zinc-300',
+          : 'border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-300',
         className,
       )}
     >
@@ -316,7 +316,7 @@ function LiveChip({
         <span
           className={cn(
             'relative inline-flex h-2 w-2 rounded-full',
-            isHealthy ? 'bg-emerald-400' : 'bg-zinc-500',
+            isHealthy ? 'bg-emerald-400' : 'bg-zinc-400 dark:bg-zinc-500',
           )}
         />
       </span>
@@ -325,8 +325,8 @@ function LiveChip({
       </span>
       {lastRunAt ? (
         <>
-          <span className="text-zinc-600">·</span>
-          <span className="text-zinc-400">
+          <span className="text-zinc-400 dark:text-zinc-600">·</span>
+          <span className="text-zinc-600 dark:text-zinc-400">
             last run {formatRelative(lastRunAt)}
           </span>
         </>
@@ -355,7 +355,7 @@ function FilterBar({
       <span className="text-xs text-zinc-500 tabular-nums">
         {visibleCount}/{totalCount}
       </span>
-      <div className="flex items-center gap-1 rounded-lg border border-zinc-800 bg-zinc-900/50 p-1">
+      <div className="flex items-center gap-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 p-1">
         {(['all', 'active', 'paused'] as const).map((opt) => (
           <button
             key={opt}
@@ -364,8 +364,8 @@ function FilterBar({
             className={cn(
               'rounded-md px-2.5 py-1 text-xs transition-colors',
               status === opt
-                ? 'bg-zinc-800 text-zinc-100'
-                : 'text-zinc-400 hover:text-zinc-200',
+                ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200',
             )}
           >
             {opt === 'all' ? 'All' : opt === 'active' ? 'Active' : 'Paused'}
@@ -379,7 +379,7 @@ function FilterBar({
           value={query}
           placeholder="Search projects"
           onChange={(e) => onQueryChange(e.target.value)}
-          className="h-8 w-48 rounded-md border border-zinc-800 bg-zinc-900/50 pl-7 pr-2 text-xs text-zinc-100 placeholder:text-zinc-500 focus:border-accent-400 focus:outline-none focus:ring-2 focus:ring-accent-400/30"
+          className="h-8 w-48 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 pl-7 pr-2 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 focus:border-accent-400 focus:outline-none focus:ring-2 focus:ring-accent-400/30"
         />
       </div>
     </div>
@@ -391,7 +391,7 @@ function NoMatchesState({ onClear }: { onClear: () => void }) {
     <Card className="border-dashed">
       <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
         <Search className="h-5 w-5 text-zinc-500" />
-        <p className="text-sm text-zinc-400">No projects match the filters.</p>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">No projects match the filters.</p>
         <button
           type="button"
           onClick={onClear}
@@ -426,7 +426,7 @@ const HEALTH_DOT_CLASS: Record<RunHealth, string> = {
   recent: 'bg-emerald-400',
   stale: 'bg-amber-400',
   old: 'bg-red-400',
-  never: 'bg-zinc-600',
+  never: 'bg-zinc-300 dark:bg-zinc-600',
 };
 
 function StatsRow({
@@ -489,7 +489,7 @@ function Stat({
   dotClass?: string;
 }) {
   return (
-    <div className="group flex flex-col gap-2 rounded-xl border border-zinc-800 bg-zinc-900/50 px-5 py-4 backdrop-blur transition-colors hover:border-zinc-700">
+    <div className="group flex flex-col gap-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 px-5 py-4 backdrop-blur transition-colors hover:border-zinc-300 dark:hover:border-zinc-700">
       <div className="flex items-center gap-2 text-zinc-500">
         <span className={accent ? 'text-accent-400' : 'text-zinc-500'}>
           {icon}
@@ -503,8 +503,8 @@ function Stat({
           'flex items-center gap-2 font-semibold tracking-tight tabular-nums',
           compact ? 'text-base' : 'text-3xl',
           accent && !compact ? 'text-accent-300' : '',
-          !accent && !compact ? 'text-zinc-100' : '',
-          compact && !valueClass ? 'text-zinc-200' : '',
+          !accent && !compact ? 'text-zinc-900 dark:text-zinc-100' : '',
+          compact && !valueClass ? 'text-zinc-800 dark:text-zinc-200' : '',
           valueClass,
         )}
       >
@@ -531,14 +531,14 @@ function ProjectCard({
     <Link
       href={`/projects/${p.id}`}
       style={{ animationDelay: `${Math.min(index, 6) * 40}ms` }}
-      className="group relative flex h-full animate-[fadeInUp_300ms_ease-out_both] flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/40 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent-700/70 hover:bg-zinc-900/70 hover:shadow-xl hover:shadow-accent-900/20"
+      className="group relative flex h-full animate-[fadeInUp_300ms_ease-out_both] flex-col overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/40 dark:bg-zinc-900/40 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent-700/70 hover:bg-white/70 dark:hover:bg-zinc-900/70 hover:shadow-xl hover:shadow-accent-900/20"
     >
       <div
         className={cn(
           'h-1 w-full bg-gradient-to-r',
           p.isActive
             ? 'from-accent-500 via-accent-400 to-fuchsia-500'
-            : 'from-zinc-700 via-zinc-600 to-zinc-700',
+            : 'from-zinc-200 dark:from-zinc-700 via-zinc-300 dark:via-zinc-600 to-zinc-200 dark:to-zinc-700',
         )}
       />
       <div className="flex h-full flex-col gap-5 p-5">
@@ -548,25 +548,25 @@ function ProjectCard({
               'flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-base font-semibold ring-1',
               p.isActive
                 ? 'bg-gradient-to-br from-accent-700/70 to-accent-900/70 text-accent-100 ring-accent-600/40'
-                : 'bg-zinc-800 text-zinc-400 ring-zinc-700',
+                : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 ring-zinc-300 dark:ring-zinc-700',
             )}
           >
             {firstChar}
           </div>
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <div className="flex items-center gap-2">
-              <h3 className="truncate text-base font-semibold text-zinc-100 group-hover:text-white">
+              <h3 className="truncate text-base font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-white">
                 {p.name}
               </h3>
               <StatusDot active={p.isActive} />
             </div>
-            <p className="line-clamp-2 text-sm text-zinc-400">
+            <p className="line-clamp-2 text-sm text-zinc-600 dark:text-zinc-400">
               {p.description?.trim() || (
-                <span className="text-zinc-600">No description</span>
+                <span className="text-zinc-400 dark:text-zinc-600">No description</span>
               )}
             </p>
           </div>
-          <ArrowRight className="h-4 w-4 shrink-0 text-zinc-600 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-accent-300 group-hover:opacity-100" />
+          <ArrowRight className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-600 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-accent-300 group-hover:opacity-100" />
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
@@ -574,7 +574,7 @@ function ProjectCard({
           <Badge>{p.domain}</Badge>
         </div>
 
-        <div className="mt-auto flex flex-col gap-3 border-t border-zinc-800 pt-4">
+        <div className="mt-auto flex flex-col gap-3 border-t border-zinc-200 dark:border-zinc-800 pt-4">
           <div className="grid grid-cols-3 gap-3">
             <MiniStat
               icon={<Rss className="h-3 w-3" />}
@@ -617,7 +617,7 @@ function StatusDot({ active }: { active: boolean }) {
   return (
     <span
       title="Paused"
-      className="inline-flex h-2 w-2 shrink-0 rounded-full bg-zinc-600 ring-2 ring-zinc-700"
+      className="inline-flex h-2 w-2 shrink-0 rounded-full bg-zinc-300 dark:bg-zinc-600 ring-2 ring-zinc-300 dark:ring-zinc-700"
     />
   );
 }
@@ -636,13 +636,13 @@ function MiniStat({
   return (
     <div className="flex min-w-0 flex-col gap-1">
       <span className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-zinc-500">
-        <span className="text-zinc-600">{icon}</span>
+        <span className="text-zinc-400 dark:text-zinc-600">{icon}</span>
         {label}
       </span>
       <span
         className={cn(
           'truncate text-sm tabular-nums',
-          valueClass ?? 'text-zinc-200',
+          valueClass ?? 'text-zinc-800 dark:text-zinc-200',
         )}
       >
         {value}
@@ -669,10 +669,10 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
           <Sparkles className="h-7 w-7 text-accent-200" />
         </div>
         <div className="max-w-md">
-          <h2 className="text-xl font-semibold text-zinc-100">
+          <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
             Curate signal from noise
           </h2>
-          <p className="mt-2.5 text-sm leading-relaxed text-zinc-400">
+          <p className="mt-2.5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
             A project bundles RSS sources, a target audience, and a tone into
             one curation pipeline. Run it on a schedule, get a short list of
             ready-to-publish posts every morning.
@@ -682,7 +682,7 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
           <Plus className="h-4 w-4" />
           Create your first project
         </Button>
-        <div className="mt-2 grid w-full max-w-2xl grid-cols-3 gap-4 border-t border-zinc-800 pt-7">
+        <div className="mt-2 grid w-full max-w-2xl grid-cols-3 gap-4 border-t border-zinc-200 dark:border-zinc-800 pt-7">
           <HowItWorksStep
             num={1}
             icon={<Rss className="h-4 w-4" />}
@@ -720,13 +720,13 @@ function HowItWorksStep({
 }) {
   return (
     <div className="flex flex-col items-center gap-2 text-center">
-      <div className="relative flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-accent-300">
+      <div className="relative flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-accent-300">
         {icon}
-        <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent-500 text-[9px] font-bold text-zinc-950">
+        <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent-500 text-[9px] font-bold text-zinc-50 dark:text-zinc-950">
           {num}
         </span>
       </div>
-      <span className="text-xs font-semibold text-zinc-200">{title}</span>
+      <span className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">{title}</span>
       <span className="text-[11px] text-zinc-500">{text}</span>
     </div>
   );
@@ -734,7 +734,7 @@ function HowItWorksStep({
 
 function HowItWorksFooter() {
   return (
-    <section className="relative mt-20 overflow-hidden rounded-2xl border border-zinc-800/70 bg-zinc-900/30 p-7 md:p-10">
+    <section className="relative mt-20 overflow-hidden rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/30 dark:bg-zinc-900/30 p-7 md:p-10">
       {/* Soft gradient accent at the top edge */}
       <span
         aria-hidden="true"
@@ -742,10 +742,10 @@ function HowItWorksFooter() {
       />
       <div className="mb-7 flex flex-col gap-2 md:mb-9">
         <SectionEyebrow num="03" label="The pipeline" />
-        <h2 className="text-2xl font-semibold tracking-tight text-zinc-100 md:text-3xl">
+        <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 md:text-3xl">
           Three steps. Every run.
         </h2>
-        <p className="max-w-xl text-sm text-zinc-400">
+        <p className="max-w-xl text-sm text-zinc-600 dark:text-zinc-400">
           Eagle Eyes runs on a schedule you control. Here's what happens when
           a pipeline fires — fully automated until you sign off.
         </p>
@@ -790,15 +790,15 @@ function FooterStep({
       {/* Oversized faded numeral as a visual anchor */}
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute -top-4 right-0 select-none font-mono text-[64px] font-semibold leading-none text-zinc-800/70"
+        className="pointer-events-none absolute -top-4 right-0 select-none font-mono text-[64px] font-semibold leading-none text-zinc-200/70 dark:text-zinc-800/70"
       >
         {num}
       </span>
       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-accent-700/40 to-accent-900/40 text-accent-200 ring-1 ring-accent-700/40">
         {icon}
       </div>
-      <h3 className="text-base font-semibold text-zinc-100">{title}</h3>
-      <p className="text-[13px] leading-relaxed text-zinc-400">{text}</p>
+      <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{title}</h3>
+      <p className="text-[13px] leading-relaxed text-zinc-600 dark:text-zinc-400">{text}</p>
     </div>
   );
 }
@@ -809,10 +809,10 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
   return (
     <Card>
       <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
-        <h2 className="text-base font-semibold text-zinc-100">
+        <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
           Couldn&apos;t load projects
         </h2>
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
           Check the backend is running on {apiUrl}.
         </p>
         <Button variant="secondary" onClick={onRetry}>

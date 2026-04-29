@@ -52,14 +52,14 @@ export function SignalsTab({ projectId }: { projectId: string }) {
     return (
       <Card className="border-dashed">
         <CardContent className="flex flex-col items-center gap-4 py-14 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-900 ring-1 ring-zinc-800">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white dark:bg-zinc-900 ring-1 ring-zinc-200 dark:ring-zinc-800">
             <TrendingUp className="h-5 w-5 text-accent-300" />
           </div>
           <div className="max-w-md">
-            <h3 className="text-base font-semibold text-zinc-100">
+            <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
               No market signals yet
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+            <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
               After the next pipeline run, the AI will read the new articles
               and surface any directional signals it finds on specific
               assets — crypto, stocks, commodities, currencies, or indices.
@@ -100,9 +100,9 @@ function ReportCard({ report }: { report: MarketReportDto }) {
   return (
     <Card>
       <CardContent className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-zinc-800 pb-3">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-3">
           <div className="flex items-baseline gap-2">
-            <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-zinc-300">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-zinc-700 dark:text-zinc-300">
               Market signals
             </h3>
             <Badge tone="accent">
@@ -144,30 +144,30 @@ function SignalRow({
     .filter((it): it is MarketReportDto['items'][number] => !!it);
 
   return (
-    <li className="flex flex-col gap-2 rounded-lg border border-zinc-800 bg-zinc-950/40 p-3">
+    <li className="flex flex-col gap-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-950/40 p-3">
       <div className="flex flex-wrap items-center gap-2">
         <DirectionBadge direction={signal.direction} />
-        <span className="text-sm font-semibold text-zinc-100">
+        <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
           {signal.asset}
         </span>
         <span className="text-xs text-zinc-500">·</span>
-        <span className="text-xs text-zinc-400">
+        <span className="text-xs text-zinc-600 dark:text-zinc-400">
           {ASSET_CLASS_LABEL[signal.assetClass]}
         </span>
         {signal.horizon ? (
           <>
             <span className="text-xs text-zinc-500">·</span>
-            <span className="text-xs text-zinc-400">{signal.horizon}</span>
+            <span className="text-xs text-zinc-600 dark:text-zinc-400">{signal.horizon}</span>
           </>
         ) : null}
         <ConfidencePill confidence={signal.confidence} />
       </div>
-      <p className="text-sm leading-relaxed text-zinc-300">
+      <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
         {signal.rationale}
       </p>
       {supporting.length > 0 ? (
         <details className="mt-1 text-xs">
-          <summary className="cursor-pointer select-none text-zinc-500 hover:text-zinc-300">
+          <summary className="cursor-pointer select-none text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">
             Supporting articles ({supporting.length})
           </summary>
           <ul className="mt-1.5 flex flex-col gap-1 pl-3">
@@ -176,19 +176,19 @@ function SignalRow({
                 key={it.contentItemId}
                 className="flex items-baseline gap-2"
               >
-                <span className="text-zinc-700" aria-hidden>
+                <span className="text-zinc-300 dark:text-zinc-700" aria-hidden>
                   ◦
                 </span>
                 <a
                   href={it.sourceUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="min-w-0 flex-1 truncate text-zinc-400 hover:text-accent-300"
+                  className="min-w-0 flex-1 truncate text-zinc-600 dark:text-zinc-400 hover:text-accent-300"
                   title={it.title}
                 >
                   {it.title}
                 </a>
-                <span className="shrink-0 text-zinc-600">
+                <span className="shrink-0 text-zinc-400 dark:text-zinc-600">
                   {hostnameOf(it.sourceUrl)}
                 </span>
               </li>
@@ -218,7 +218,7 @@ function DirectionBadge({ direction }: { direction: Signal['direction'] }) {
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 rounded-md border border-zinc-700 bg-zinc-900 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-zinc-300">
+    <span className="inline-flex items-center gap-1 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300">
       <HelpCircle className="h-3.5 w-3.5" />
       Mixed
     </span>
@@ -234,7 +234,7 @@ function ConfidencePill({ confidence }: { confidence: Signal['confidence'] }) {
           'border-accent-700/60 bg-accent-950/40 text-accent-200',
         confidence === 'medium' &&
           'border-amber-800/60 bg-amber-950/30 text-amber-200',
-        confidence === 'low' && 'border-zinc-700 bg-zinc-900 text-zinc-400',
+        confidence === 'low' && 'border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400',
       )}
       title={CONFIDENCE_LABEL[confidence]}
     >

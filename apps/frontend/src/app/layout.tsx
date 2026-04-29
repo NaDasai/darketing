@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Navbar } from '@/components/layout/Navbar';
+import { ThemeScript } from '@/components/layout/ThemeScript';
 import { Providers } from './providers';
 import './globals.css';
 
@@ -22,12 +23,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`dark ${inter.variable}`}
-      suppressHydrationWarning
-    >
-      <body className="min-h-screen bg-zinc-950 font-sans text-zinc-100 antialiased">
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
+      <body className="min-h-screen bg-zinc-50 font-sans text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100">
         <Providers>
           <Navbar />
           {children}

@@ -10,24 +10,24 @@ export default function HomePage() {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,transparent,rgba(9,9,11,0.6)),radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.04)_1px,transparent_0)] [background-size:auto,32px_32px]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,transparent,rgba(250,250,250,0.6)),radial-gradient(circle_at_1px_1px,rgba(0,0,0,0.04)_1px,transparent_0)] dark:bg-[linear-gradient(to_bottom,transparent,rgba(9,9,11,0.6)),radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.04)_1px,transparent_0)] [background-size:auto,32px_32px]"
       />
 
       {/* Hero */}
       <section className="mx-auto flex w-full max-w-5xl flex-col items-center px-6 pb-20 pt-24 text-center sm:pt-32">
-        <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/60 px-3 py-1 text-xs font-medium text-zinc-300">
+        <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 px-3 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300">
           <span className="h-1.5 w-1.5 rounded-full bg-accent-400" />
           Content curation, on autopilot
         </span>
 
-        <h1 className="text-balance text-4xl font-semibold tracking-tight text-zinc-50 sm:text-6xl">
+        <h1 className="text-balance text-4xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 sm:text-6xl">
           See what matters.{' '}
           <span className="bg-gradient-to-r from-accent-400 to-indigo-300 bg-clip-text text-transparent">
             Post what works.
           </span>
         </h1>
 
-        <p className="mt-6 max-w-xl text-pretty text-base text-zinc-400 sm:text-lg">
+        <p className="mt-6 max-w-xl text-pretty text-base text-zinc-600 dark:text-zinc-400 sm:text-lg">
           Eagle Eyes scans your feeds. Picks the best stories. Drafts your next
           post. You approve. You publish.
         </p>
@@ -54,7 +54,7 @@ export default function HomePage() {
           </Link>
           <Link
             href="#how-it-works"
-            className="text-sm text-zinc-400 transition-colors hover:text-zinc-200"
+            className="text-sm text-zinc-600 dark:text-zinc-400 transition-colors hover:text-zinc-800 dark:hover:text-zinc-200"
           >
             See how it works →
           </Link>
@@ -73,10 +73,10 @@ export default function HomePage() {
         className="mx-auto w-full max-w-5xl px-6 pb-20"
       >
         <div className="mb-10 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight text-zinc-100 sm:text-3xl">
+          <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-3xl">
             Four steps. One workflow.
           </h2>
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
             From RSS to ready-to-post. No spreadsheets. No tabs.
           </p>
         </div>
@@ -85,18 +85,18 @@ export default function HomePage() {
           {steps.map((s, i) => (
             <li
               key={s.title}
-              className="group relative rounded-xl border border-zinc-800 bg-zinc-900/40 p-5 transition-colors hover:border-zinc-700"
+              className="group relative rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/40 dark:bg-zinc-900/40 p-5 transition-colors hover:border-zinc-300 dark:hover:border-zinc-700"
             >
               <div className="mb-3 flex items-center justify-between">
                 <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-500/10 text-accent-400">
                   {s.icon}
                 </span>
-                <span className="font-mono text-xs text-zinc-600">
+                <span className="font-mono text-xs text-zinc-400 dark:text-zinc-600">
                   0{i + 1}
                 </span>
               </div>
-              <h3 className="text-sm font-semibold text-zinc-100">{s.title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-zinc-400">
+              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{s.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
                 {s.body}
               </p>
             </li>
@@ -110,10 +110,10 @@ export default function HomePage() {
           {highlights.map((h) => (
             <div
               key={h.title}
-              className="rounded-xl border border-zinc-800 bg-gradient-to-b from-zinc-900/60 to-zinc-900/20 p-5"
+              className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-gradient-to-b from-white/60 dark:from-zinc-900/60 to-white/20 dark:to-zinc-900/20 p-5"
             >
-              <h3 className="text-sm font-semibold text-zinc-100">{h.title}</h3>
-              <p className="mt-1.5 text-sm text-zinc-400">{h.body}</p>
+              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{h.title}</h3>
+              <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">{h.body}</p>
             </div>
           ))}
         </div>
@@ -121,11 +121,11 @@ export default function HomePage() {
 
       {/* Final CTA */}
       <section className="mx-auto w-full max-w-3xl px-6 pb-28">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-8 text-center sm:p-12">
-          <h2 className="text-2xl font-semibold tracking-tight text-zinc-100 sm:text-3xl">
+        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/40 dark:bg-zinc-900/40 p-8 text-center sm:p-12">
+          <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-3xl">
             Ready to ship better posts?
           </h2>
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
             Spin up a project. Add a feed. Let Eagle Eyes do the rest.
           </p>
           <div className="mt-6 flex justify-center">
@@ -144,8 +144,8 @@ export default function HomePage() {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="font-medium text-zinc-300">{value}</span>
-      <span className="text-zinc-600">·</span>
+      <span className="font-medium text-zinc-700 dark:text-zinc-300">{value}</span>
+      <span className="text-zinc-400 dark:text-zinc-600">·</span>
       <span>{label}</span>
     </div>
   );

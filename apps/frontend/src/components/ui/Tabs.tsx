@@ -59,7 +59,7 @@ export function TabList({
     <div
       role="tablist"
       className={cn(
-        'inline-flex items-center gap-1 rounded-md border border-zinc-800 bg-zinc-900 p-1',
+        'inline-flex items-center gap-1 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1',
         className,
       )}
     >
@@ -88,8 +88,8 @@ export function Tab({
       className={cn(
         'rounded px-3 py-1.5 text-sm font-medium transition-colors',
         selected
-          ? 'bg-zinc-950 text-zinc-100 shadow-sm'
-          : 'text-zinc-400 hover:text-zinc-100',
+          ? 'bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 shadow-sm'
+          : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100',
         className,
       )}
     >

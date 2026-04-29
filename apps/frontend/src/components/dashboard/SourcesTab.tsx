@@ -127,14 +127,14 @@ export function SourcesTab({ projectId }: { projectId: string }) {
             <span className="text-xs uppercase tracking-wide text-zinc-500">
               Choose a feed
             </span>
-            <ul className="flex flex-col divide-y divide-zinc-800">
+            <ul className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
               {candidates.map((feed) => (
                 <li
                   key={feed.url}
                   className="flex items-center gap-3 py-2"
                 >
                   <div className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-sm text-zinc-100">
+                    <span className="truncate text-sm text-zinc-900 dark:text-zinc-100">
                       {feed.title ?? feed.url}
                     </span>
                     {feed.title ? (
@@ -172,23 +172,23 @@ export function SourcesTab({ projectId }: { projectId: string }) {
       sources.data &&
       sources.data.length === 0 ? (
         <Card className="border-dashed">
-          <CardContent className="py-8 text-center text-sm text-zinc-400">
+          <CardContent className="py-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
             No sources yet. Paste a site or feed URL above. If it's a regular
-            site URL, click <span className="text-zinc-200">Discover feeds</span>
+            site URL, click <span className="text-zinc-800 dark:text-zinc-200">Discover feeds</span>
             {' '}to find its RSS link automatically.
           </CardContent>
         </Card>
       ) : null}
 
       {sources.data && sources.data.length > 0 ? (
-        <ul className="flex flex-col divide-y divide-zinc-800 overflow-hidden rounded-lg border border-zinc-800">
+        <ul className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
           {sources.data.map((s) => (
             <li
               key={s.id}
-              className="flex items-center gap-3 bg-zinc-900/40 px-4 py-3"
+              className="flex items-center gap-3 bg-white/40 dark:bg-zinc-900/40 px-4 py-3"
             >
               <div className="flex min-w-0 flex-1 flex-col">
-                <span className="truncate text-sm text-zinc-100">
+                <span className="truncate text-sm text-zinc-900 dark:text-zinc-100">
                   {s.rssUrl}
                 </span>
                 <span className="text-xs text-zinc-500">

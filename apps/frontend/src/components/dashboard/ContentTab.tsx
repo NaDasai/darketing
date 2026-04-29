@@ -102,7 +102,7 @@ export function ContentTab({ projectId }: { projectId: string }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         {sources.data && sources.data.length > 0 ? (
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-            <span className="text-xs text-zinc-400">Sources:</span>
+            <span className="text-xs text-zinc-600 dark:text-zinc-400">Sources:</span>
             <button
               type="button"
               onClick={clearSources}
@@ -110,7 +110,7 @@ export function ContentTab({ projectId }: { projectId: string }) {
                 'rounded-full border px-3 py-1 text-xs transition-colors',
                 !sourceFilterActive
                   ? 'border-accent-500 bg-accent-900/40 text-accent-200'
-                  : 'border-zinc-700 bg-zinc-900 text-zinc-400 hover:bg-zinc-800',
+                  : 'border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800',
               )}
             >
               All
@@ -127,7 +127,7 @@ export function ContentTab({ projectId }: { projectId: string }) {
                     'rounded-full border px-3 py-1 text-xs transition-colors',
                     active
                       ? 'border-accent-500 bg-accent-900/40 text-accent-200'
-                      : 'border-zinc-700 bg-zinc-900 text-zinc-300 hover:bg-zinc-800',
+                      : 'border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800',
                   )}
                 >
                   {hostnameOf(s.rssUrl)}
@@ -139,7 +139,7 @@ export function ContentTab({ projectId }: { projectId: string }) {
           <div />
         )}
         <div className="flex shrink-0 items-center gap-2">
-          <label htmlFor="content-duration" className="text-xs text-zinc-400">
+          <label htmlFor="content-duration" className="text-xs text-zinc-600 dark:text-zinc-400">
             Posted within
           </label>
           <Select
@@ -167,7 +167,7 @@ export function ContentTab({ projectId }: { projectId: string }) {
       filteredContent &&
       filteredContent.length === 0 ? (
         <Card className="border-dashed">
-          <CardContent className="py-10 text-center text-sm text-zinc-400">
+          <CardContent className="py-10 text-center text-sm text-zinc-600 dark:text-zinc-400">
             {total > 0
               ? content.data && content.data.items.length > 0
                 ? 'No content on this page matches the current filters.'
@@ -193,7 +193,7 @@ export function ContentTab({ projectId }: { projectId: string }) {
                   href={item.sourceUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="font-medium text-zinc-100 hover:text-accent-300"
+                  className="font-medium text-zinc-900 dark:text-zinc-100 hover:text-accent-300"
                 >
                   {item.title}
                 </a>
@@ -214,9 +214,9 @@ export function ContentTab({ projectId }: { projectId: string }) {
                 </div>
               </div>
               {item.summary ? (
-                <p className="text-sm text-zinc-400">{item.summary}</p>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">{item.summary}</p>
               ) : null}
-              <div className="flex items-center justify-between gap-3 border-t border-zinc-800 pt-2">
+              <div className="flex items-center justify-between gap-3 border-t border-zinc-200 dark:border-zinc-800 pt-2">
                 <span
                   className="text-xs text-zinc-500"
                   title={formatDate(item.publishedAt ?? item.createdAt)}
@@ -235,7 +235,7 @@ export function ContentTab({ projectId }: { projectId: string }) {
                     {hostnameOf(source.rssUrl)}
                   </a>
                 ) : (
-                  <span className="text-xs text-zinc-600">unknown source</span>
+                  <span className="text-xs text-zinc-400 dark:text-zinc-600">unknown source</span>
                 )}
               </div>
             </CardContent>
@@ -244,7 +244,7 @@ export function ContentTab({ projectId }: { projectId: string }) {
       })}
 
       {total > 0 ? (
-        <div className="flex items-center justify-between gap-3 pt-2 text-xs text-zinc-400">
+        <div className="flex items-center justify-between gap-3 pt-2 text-xs text-zinc-600 dark:text-zinc-400">
           <span>
             Showing {rangeStart}–{rangeEnd} of {total}
           </span>
@@ -257,7 +257,7 @@ export function ContentTab({ projectId }: { projectId: string }) {
             >
               Previous
             </Button>
-            <span className="tabular-nums text-zinc-300">
+            <span className="tabular-nums text-zinc-700 dark:text-zinc-300">
               Page {page} of {totalPages}
             </span>
             <Button

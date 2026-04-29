@@ -56,14 +56,14 @@ export function LogsTab({ projectId }: { projectId: string }) {
     return (
       <Card className="border-dashed">
         <CardContent className="flex flex-col items-center gap-4 py-14 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-900 ring-1 ring-zinc-800">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white dark:bg-zinc-900 ring-1 ring-zinc-200 dark:ring-zinc-800">
             <Clock className="h-5 w-5 text-accent-300" />
           </div>
           <div className="max-w-md">
-            <h3 className="text-base font-semibold text-zinc-100">
+            <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
               No pipeline runs yet
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+            <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
               When you trigger a run manually or the schedule fires, a recap
               of what happened will be saved here — counts, warnings, and any
               failure reason.
@@ -108,7 +108,7 @@ function RunLogCard({ log }: { log: RunLogDto }) {
   return (
     <Card>
       <CardContent className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-zinc-800 pb-3">
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-zinc-200 dark:border-zinc-800 pb-3">
           <div className="flex flex-col gap-1.5">
             <div className="flex flex-wrap items-center gap-2">
               <StatusBadge status={log.status} />
@@ -137,7 +137,7 @@ function RunLogCard({ log }: { log: RunLogDto }) {
         </div>
 
         {succeeded ? (
-          <p className="text-sm text-zinc-200">
+          <p className="text-sm text-zinc-800 dark:text-zinc-200">
             Pipeline run complete — {log.stats.newItems} new,{' '}
             {log.stats.selected} selected, {log.stats.postsCreated} posts
             {log.stats.trendThemes > 0
@@ -162,8 +162,8 @@ function RunLogCard({ log }: { log: RunLogDto }) {
         <StatsGrid stats={log.stats} />
 
         {log.events.length > 0 ? (
-          <details className="border-t border-zinc-800 pt-3">
-            <summary className="cursor-pointer select-none text-xs font-medium uppercase tracking-wide text-zinc-400 hover:text-zinc-200">
+          <details className="border-t border-zinc-200 dark:border-zinc-800 pt-3">
+            <summary className="cursor-pointer select-none text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200">
               Event log ({log.events.length})
             </summary>
             <ul className="mt-2 flex flex-col gap-1.5">
@@ -220,12 +220,12 @@ function StatsGrid({ stats }: { stats: RunLogDto['stats'] }) {
       {cells.map((cell) => (
         <div
           key={cell.label}
-          className="rounded-lg border border-zinc-800 bg-zinc-950/40 px-3 py-2"
+          className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-950/40 px-3 py-2"
         >
           <div className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
             {cell.label}
           </div>
-          <div className="mt-0.5 text-lg font-semibold text-zinc-100 tabular-nums">
+          <div className="mt-0.5 text-lg font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">
             {cell.value}
           </div>
         </div>
@@ -240,7 +240,7 @@ function EventRow({ event }: { event: RunEvent }) {
       <span
         className={cn(
           'shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider',
-          event.level === 'info' && 'bg-zinc-800 text-zinc-300',
+          event.level === 'info' && 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300',
           event.level === 'warn' && 'bg-amber-950/50 text-amber-200',
           event.level === 'error' && 'bg-red-950/60 text-red-200',
         )}
@@ -250,7 +250,7 @@ function EventRow({ event }: { event: RunEvent }) {
       <span
         className={cn(
           'min-w-0 flex-1 break-words',
-          event.level === 'info' && 'text-zinc-400',
+          event.level === 'info' && 'text-zinc-600 dark:text-zinc-400',
           event.level === 'warn' && 'text-amber-200/90',
           event.level === 'error' && 'text-red-200',
         )}
@@ -258,7 +258,7 @@ function EventRow({ event }: { event: RunEvent }) {
         {event.message}
       </span>
       <span
-        className="shrink-0 text-xs text-zinc-600"
+        className="shrink-0 text-xs text-zinc-400 dark:text-zinc-600"
         title={formatDate(event.at)}
       >
         {formatRelative(event.at)}

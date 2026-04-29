@@ -115,7 +115,7 @@ export function SettingsTab({ project }: { project: ProjectDto }) {
                 After each run, the highest-scoring N new items are selected
                 and the AI writes one X post + one LinkedIn post for each.
                 With {form.topNPerRun ?? 5} picks you get up to{' '}
-                <span className="text-zinc-300 tabular-nums">
+                <span className="text-zinc-700 dark:text-zinc-300 tabular-nums">
                   {(form.topNPerRun ?? 5) * 2}
                 </span>{' '}
                 drafts to approve per run.
@@ -145,18 +145,18 @@ export function SettingsTab({ project }: { project: ProjectDto }) {
               error={errors.schedule}
             />
           </Field>
-          <label className="flex items-center gap-2 text-sm text-zinc-300">
+          <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
             <input
               type="checkbox"
               checked={form.isActive ?? true}
               onChange={(e) =>
                 setForm({ ...form, isActive: e.target.checked })
               }
-              className="h-4 w-4 rounded border-zinc-700 bg-zinc-950 accent-accent-500"
+              className="h-4 w-4 rounded border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 accent-accent-500"
             />
             Run on schedule
           </label>
-          <div className="flex items-center justify-end border-t border-zinc-800 pt-4">
+          <div className="flex items-center justify-end border-t border-zinc-200 dark:border-zinc-800 pt-4">
             <Button type="submit" isLoading={update.isPending}>
               Save changes
             </Button>
@@ -191,7 +191,7 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-medium uppercase tracking-wide text-zinc-400">
+      <label className="text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
         {label}
       </label>
       {children}

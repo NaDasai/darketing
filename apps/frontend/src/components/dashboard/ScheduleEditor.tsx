@@ -197,7 +197,7 @@ export function ScheduleEditor({
           ) : null}
 
           {state.mode === 'every-n-hours' ? (
-            <label className="flex items-center gap-2 text-xs text-zinc-400">
+            <label className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
               Every
               <Select
                 aria-label="Interval (hours)"
@@ -220,7 +220,7 @@ export function ScheduleEditor({
           {state.mode === 'daily' || state.mode === 'weekly' ? (
             <>
               {state.mode === 'weekly' ? (
-                <label className="flex items-center gap-2 text-xs text-zinc-400">
+                <label className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
                   On
                   <Select
                     aria-label="Day of week"
@@ -238,7 +238,7 @@ export function ScheduleEditor({
                   </Select>
                 </label>
               ) : null}
-              <label className="flex items-center gap-2 text-xs text-zinc-400">
+              <label className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
                 At
                 <Input
                   type="time"
@@ -272,14 +272,14 @@ export function ScheduleEditor({
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-zinc-800 bg-zinc-950/50 px-3 py-2">
-        <span className="text-xs text-zinc-300">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 px-3 py-2">
+        <span className="text-xs text-zinc-700 dark:text-zinc-300">
           {describe(state, customExpr)}
         </span>
         <code
           className={cn(
-            'rounded bg-zinc-900 px-2 py-0.5 font-mono text-xs',
-            error ? 'text-red-300' : 'text-zinc-400',
+            'rounded bg-white dark:bg-zinc-900 px-2 py-0.5 font-mono text-xs',
+            error ? 'text-red-300' : 'text-zinc-600 dark:text-zinc-400',
           )}
         >
           {displayedExpr || '—'}

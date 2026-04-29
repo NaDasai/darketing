@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 type Tone = 'neutral' | 'accent' | 'success' | 'warning' | 'danger';
 
 const tones: Record<Tone, string> = {
-  neutral: 'border-zinc-700 bg-zinc-800/60 text-zinc-300',
+  neutral: 'border-zinc-300 dark:border-zinc-700 bg-zinc-100/60 dark:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300',
   accent: 'border-accent-800 bg-accent-900/40 text-accent-200',
   success: 'border-emerald-800 bg-emerald-950/60 text-emerald-300',
   warning: 'border-amber-800 bg-amber-950/60 text-amber-300',
