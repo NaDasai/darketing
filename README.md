@@ -188,12 +188,12 @@ If every box is ticked, the MVP works end-to-end.
 | `pnpm dev:worker` | BullMQ worker + cron only |
 | `pnpm dev:frontend` | Next.js only |
 | `pnpm seed` | Wipes collections, creates demo project + sources |
-| `pnpm build` | Typecheck every workspace (`tsc --noEmit`) |
-| `pnpm typecheck` | Same as `build` |
+| `pnpm build` | Compiles the backend to `apps/backend/dist` (tsup); frontend runs `next build` |
+| `pnpm typecheck` | `tsc --noEmit` across all workspaces |
 | `pnpm lint` | ESLint across the monorepo |
 | `pnpm format` | Prettier write |
 
-> **Note:** there is no compile step. `tsx` runs TypeScript directly in dev and prod. `pnpm build` is type-check only.
+> **Note:** dev runs through `tsx`. Production builds the backend to `dist/` via `tsup` so PM2 / `node` can run it without `tsx` in scope.
 
 ---
 
@@ -238,6 +238,79 @@ All endpoints return JSON. Errors use `{ "error": { "code", "message", "details"
 | PATCH | `/posts/:id` | Update `editedContent` or `status` |
 
 Request/response contracts are the Zod schemas in [packages/shared/src](packages/shared/src).
+
+---
+
+## Deploying the backend (VPS + PM2)
+
+The backend ships with a [tsup](https://tsup.egoist.dev) build that bundles `@eagle-eyes/shared` inline, so the VPS only needs the backend's runtime deps — no monorepo gymnastics. Two PM2 processes are defined in [apps/backend/ecosystem.config.cjs](apps/backend/ecosystem.config.cjs): the API (`eagle-eyes-api`) and the worker + cron (`eagle-eyes-worker`).
+
+### One-time VPS setup
+
+```bash
+# Node 20 + pnpm + PM2
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo npm install -g pnpm pm2
+
+# MongoDB 7 and Redis 7 (or use managed services and update the URIs)
+# ... install per your distro ...
+```
+
+### Deploying
+
+```bash
+# 1. Clone (or pull) the repo
+git clone <your-fork> eagle-eyes && cd eagle-eyes
+
+# 2. Install all workspace deps (need devDeps so tsup is available)
+pnpm install --frozen-lockfile
+
+# 3. Configure backend env on the VPS
+cp apps/backend/.env.example apps/backend/.env
+# Edit apps/backend/.env: NODE_ENV=production, set MONGODB_URI, REDIS_URL,
+# OPENROUTER_API_KEY, CORS_ORIGIN (your frontend's origin).
+
+# 4. Build the backend bundle
+pnpm --filter @eagle-eyes/backend build
+# Produces apps/backend/dist/{server.js, workers/pipeline.worker.js, scripts/seed.js}
+
+# 5. (First deploy only) seed if desired
+pnpm --filter @eagle-eyes/backend seed:prod
+
+# 6. Start both processes via PM2
+cd apps/backend
+pm2 start ecosystem.config.cjs --env production
+pm2 save
+pm2 startup     # follow the printed command to enable boot persistence
+```
+
+### Updating an existing deploy
+
+```bash
+git pull
+pnpm install --frozen-lockfile
+pnpm --filter @eagle-eyes/backend build
+pm2 reload ecosystem.config.cjs --update-env   # zero-downtime reload
+```
+
+### Useful PM2 commands
+
+```bash
+pm2 status                              # process table
+pm2 logs eagle-eyes-api --lines 200     # tail API logs
+pm2 logs eagle-eyes-worker              # tail worker + cron logs
+pm2 restart eagle-eyes-api              # restart one process
+pm2 stop ecosystem.config.cjs           # stop both
+pm2 delete ecosystem.config.cjs         # remove from PM2
+```
+
+### Notes
+
+- **Frontend deploys separately.** This setup only covers the backend. Deploy [apps/frontend](apps/frontend) to Vercel/Netlify or run it under PM2 with `next start` after `pnpm --filter @eagle-eyes/frontend build`.
+- **Env file location.** `dotenv` reads `apps/backend/.env` because PM2 runs each process with `cwd` set to `apps/backend`. Move env vars into `ecosystem.config.cjs` only if you prefer not to keep a `.env` file on disk.
+- **`pnpm install --prod` is not enough.** `tsup` is a devDependency and is required to build, so do a full install on the VPS (or build elsewhere and rsync `dist/` + `node_modules/` over).
+- **Reverse proxy.** Put nginx (or Caddy) in front of `127.0.0.1:4000`, terminate TLS there, and set `CORS_ORIGIN` to your frontend domain.
 
 ---
 
