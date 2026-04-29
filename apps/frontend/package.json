@@ -1,5 +1,5 @@
 {
-  "name": "@darketing/frontend",
+  "name": "@eagle-eyes/frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@darketing/shared": "workspace:*",
+    "@eagle-eyes/shared": "workspace:*",
     "@tanstack/react-query": "^5.59.20",
     "clsx": "^2.1.1",
     "lucide-react": "^1.11.0",

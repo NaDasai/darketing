@@ -6,7 +6,7 @@ import {
   type AssetClass,
   type Confidence,
   type Direction,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 import { applyBaseToJSON, getOrCreateModel } from './helpers';
 
 export interface IMarketSignal {

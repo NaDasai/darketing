@@ -19,7 +19,7 @@ const envSchema = z.object({
   OPENROUTER_API_KEY: z.string().optional().default(''),
   OPENROUTER_MODEL: z.string().default('meta-llama/llama-3.3-70b-instruct:free'),
   OPENROUTER_BASE_URL: z.string().url().default('https://openrouter.ai/api/v1'),
-  OPENROUTER_APP_NAME: z.string().default('Darketing'),
+  OPENROUTER_APP_NAME: z.string().default('Eagle Eyes'),
   OPENROUTER_APP_URL: z.string().default('http://localhost:3000'),
 
   CRON_SCHEDULE: z.string().default('0 6 * * *'),

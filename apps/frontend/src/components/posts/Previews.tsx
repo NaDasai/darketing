@@ -1,4 +1,4 @@
-import type { PostDto } from '@darketing/shared';
+import type { PostDto } from '@eagle-eyes/shared';
 
 export function PlatformPreview({
   post,

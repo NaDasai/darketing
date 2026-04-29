@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { MarketReportsQuery } from '@darketing/shared';
+import type { MarketReportsQuery } from '@eagle-eyes/shared';
 import * as service from './service';
 
 type IdParams = { id: string };

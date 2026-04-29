@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import { TONE_VALUES, type Tone } from '@darketing/shared';
+import { TONE_VALUES, type Tone } from '@eagle-eyes/shared';
 import { applyBaseToJSON, getOrCreateModel } from './helpers';
 
 export interface IProject {

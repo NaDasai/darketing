@@ -1,10 +1,10 @@
 import axios from 'axios';
 import Parser from 'rss-parser';
-import type { DiscoveredFeed } from '@darketing/shared';
+import type { DiscoveredFeed } from '@eagle-eyes/shared';
 import { logger } from '../lib/logger';
 
 const HTTP_TIMEOUT_MS = 8000;
-const USER_AGENT = 'DarketingRSSBot/0.1 (+https://github.com/)';
+const USER_AGENT = 'EagleEyesRSSBot/0.1 (+https://github.com/)';
 
 const COMMON_PATHS = [
   '/feed',

@@ -7,7 +7,7 @@ import {
   PLATFORM_VALUES,
   type Platform,
   type Tone,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 import { env } from '../config/env';
 import { logger } from '../lib/logger';
 import { RateLimiter } from '../utils/rateLimiter';

@@ -1,7 +1,7 @@
 import type {
   MarketReportDto,
   MarketReportsQuery,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 import { MarketReportModel, ProjectModel } from '../../models';
 
 function toDto(doc: { toJSON: () => unknown }): MarketReportDto {

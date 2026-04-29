@@ -38,7 +38,7 @@ export async function scrapeArticle(url: string): Promise<string | null> {
     const article = await extract(url, undefined, {
       headers: {
         'User-Agent':
-          'Mozilla/5.0 (compatible; DarketingScraper/0.1; +https://github.com/)',
+          'Mozilla/5.0 (compatible; EagleEyesScraper/0.1; +https://github.com/)',
       },
       signal: controller.signal,
     });

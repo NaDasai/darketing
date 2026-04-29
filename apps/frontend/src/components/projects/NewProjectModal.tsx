@@ -7,7 +7,7 @@ import {
   TONE_VALUES,
   type CreateProjectInput,
   type Tone,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 import { projectsApi, ApiError } from '@/lib/api';
 import {
   Button,

@@ -5,7 +5,7 @@ import {
   ObjectIdSchema,
   PostsQuerySchema,
   UpdatePostSchema,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 import * as controller from './controller';
 
 const IdParamsSchema = z.object({ id: ObjectIdSchema });

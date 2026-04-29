@@ -4,7 +4,7 @@ import type {
   CreateProjectInput,
   ProjectDto,
   UpdateProjectInput,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 import {
   ContentItemModel,
   GeneratedPostModel,
@@ -21,7 +21,7 @@ import {
 
 // toJSON() returns a plain object shaped like ProjectDto thanks to
 // applyBaseToJSON on the schema. Fastify serializes Date → ISO string on the
-// wire, so the contract defined in @darketing/shared holds.
+// wire, so the contract defined in @eagle-eyes/shared holds.
 function toDto(doc: { toJSON: () => unknown }): ProjectDto {
   return doc.toJSON() as ProjectDto;
 }

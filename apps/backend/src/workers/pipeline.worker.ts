@@ -1,7 +1,7 @@
 import { Worker, type Job } from 'bullmq';
 import { Types } from 'mongoose';
 import type { Logger as PinoLogger } from 'pino';
-import { PLATFORM_VALUES } from '@darketing/shared';
+import { PLATFORM_VALUES } from '@eagle-eyes/shared';
 import { env } from '../config/env';
 import { connectDatabase, disconnectDatabase } from '../lib/db';
 import { logger } from '../lib/logger';

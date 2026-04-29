@@ -8,8 +8,8 @@
     "noEmit": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@darketing/shared": ["../../packages/shared/src/index.ts"],
-      "@darketing/shared/*": ["../../packages/shared/src/*"]
+      "@eagle-eyes/shared": ["../../packages/shared/src/index.ts"],
+      "@eagle-eyes/shared/*": ["../../packages/shared/src/*"]
     }
   },
   "include": ["src/**/*.ts", "scripts/**/*.ts"],

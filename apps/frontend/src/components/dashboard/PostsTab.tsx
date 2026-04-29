@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { POST_STATUS_VALUES, type PostStatus } from '@darketing/shared';
+import { POST_STATUS_VALUES, type PostStatus } from '@eagle-eyes/shared';
 import { postsApi } from '@/lib/api';
 import { useUiStore, type PlatformFilter } from '@/store/ui';
 import {

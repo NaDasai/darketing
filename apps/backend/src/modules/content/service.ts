@@ -3,7 +3,7 @@ import type {
   ContentItemDto,
   ContentQuery,
   PaginatedContent,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 import {
   ContentItemModel,
   ProjectModel,

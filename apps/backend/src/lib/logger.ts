@@ -15,7 +15,7 @@ const transport =
 
 export const logger = pino({
   level: env.LOG_LEVEL,
-  base: { service: 'darketing-backend' },
+  base: { service: 'eagle-eyes-backend' },
   ...(transport ? { transport } : {}),
 });
 

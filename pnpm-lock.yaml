@@ -32,7 +32,7 @@ importers:
 
   apps/backend:
     dependencies:
-      '@darketing/shared':
+      '@eagle-eyes/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       '@extractus/article-extractor':
@@ -99,7 +99,7 @@ importers:
 
   apps/frontend:
     dependencies:
-      '@darketing/shared':
+      '@eagle-eyes/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       '@tanstack/react-query':

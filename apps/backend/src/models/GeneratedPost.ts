@@ -6,7 +6,7 @@ import {
   type Platform,
   type PostStatus,
   type PostVariant,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 import { applyBaseToJSON, getOrCreateModel } from './helpers';
 
 export interface IGeneratedPost {

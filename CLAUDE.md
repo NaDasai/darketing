@@ -1,4 +1,4 @@
-# Darketing — Claude session handoff
+# Eagle Eyes — Claude session handoff
 
 Context for any future Claude session continuing this build. The README is user-facing; this file is **engineer-facing** (what's done, what's not, what's easy to trip on).
 
@@ -45,7 +45,7 @@ Multi-domain content curation: aggregate RSS → score relevance → rewrite top
 | Frontend | **Next.js 14 App Router** | not 15 |
 | Styling | TailwindCSS 3 | **dark mode as default** (`darkMode: 'class'`, indigo accent) |
 | State | Zustand 5 (UI only) + TanStack Query 5 (server state) | |
-| Validation | Zod 3 (shared FE/BE via `@darketing/shared`) | |
+| Validation | Zod 3 (shared FE/BE via `@eagle-eyes/shared`) | |
 | Package manager | **pnpm 9** workspaces | |
 
 **Explicitly out of scope:** Docker, Prisma, auth, PostgreSQL, direct X/LinkedIn posting, GraphQL, microservices.
@@ -55,7 +55,7 @@ Multi-domain content curation: aggregate RSS → score relevance → rewrite top
 ## Monorepo layout
 
 ```
-darketing/
+eagle-eyes/
 ├── apps/
 │   ├── backend/            # Fastify API + worker + cron
 │   │   ├── src/
@@ -84,7 +84,7 @@ darketing/
 │   └── frontend/           # Next.js 14 — only config scaffolded so far
 │       ├── package.json
 │       ├── tsconfig.json
-│       ├── next.config.mjs      (transpilePackages: ['@darketing/shared'])
+│       ├── next.config.mjs      (transpilePackages: ['@eagle-eyes/shared'])
 │       ├── tailwind.config.ts   (dark mode class strategy, indigo accent)
 │       ├── postcss.config.js
 │       ├── next-env.d.ts
@@ -113,15 +113,15 @@ darketing/
 
 ## Key decisions (non-obvious, easy to trip on)
 
-1. **No compile step for backend.** `tsx` runs everything in dev + prod. `pnpm --filter @darketing/backend build` is `tsc --noEmit` (type-check only). Backend tsconfig has `noEmit: true` and `moduleResolution: "Bundler"` so extensionless imports work. **Do not** try to `node dist/…` — there is no dist.
+1. **No compile step for backend.** `tsx` runs everything in dev + prod. `pnpm --filter @eagle-eyes/backend build` is `tsc --noEmit` (type-check only). Backend tsconfig has `noEmit: true` and `moduleResolution: "Bundler"` so extensionless imports work. **Do not** try to `node dist/…` — there is no dist.
 
-2. **`@darketing/shared` is consumed as raw TypeScript** via workspace protocol + `transpilePackages` on the frontend + `tsx` path aliases on the backend. No build step on the package. This works because all three consumers (tsx, Next, type-checker) understand TS source directly with the configured path mappings.
+2. **`@eagle-eyes/shared` is consumed as raw TypeScript** via workspace protocol + `transpilePackages` on the frontend + `tsx` path aliases on the backend. No build step on the package. This works because all three consumers (tsx, Next, type-checker) understand TS source directly with the configured path mappings.
 
 3. **`projectId` is denormalized on `GeneratedPost`.** The spec only listed `contentItemId`, but the API has `GET /posts?projectId=…&status=&platform=` and we want that to be a single indexed find, not a populate/aggregate. Set it at creation time in the worker.
 
 4. **`lastRunAt` added to `Project`.** Spec's `GET /projects/:id` response includes "last run stats" — this field satisfies it. Worker writes it at end of each successful run.
 
-5. **`BooleanStringSchema`** (not `z.coerce.boolean()`) for query flags. Native coerce treats `"false"` as truthy because `Boolean("false") === true`. Use `BooleanStringSchema` from `@darketing/shared` for any `?flag=true|false` query param.
+5. **`BooleanStringSchema`** (not `z.coerce.boolean()`) for query flags. Native coerce treats `"false"` as truthy because `Boolean("false") === true`. Use `BooleanStringSchema` from `@eagle-eyes/shared` for any `?flag=true|false` query param.
 
 6. **`OPENROUTER_API_KEY` is optional at boot.** Validated as empty-string-allowed in env schema. The LLM service enforces presence at call time. Reason: `pnpm seed` must run before the user has a key.
 
@@ -223,7 +223,7 @@ Shared DTOs + input schemas live in `packages/shared/src/schemas/`. **Always use
 **Module structure per domain (`src/modules/<domain>/`):**
 ```
 index.ts       // exports registerXRoutes(fastify)
-routes.ts      // Fastify route definitions with Zod schemas from @darketing/shared
+routes.ts      // Fastify route definitions with Zod schemas from @eagle-eyes/shared
 controller.ts  // thin: parse req, call service, return
 service.ts     // business logic, takes prisma/mongoose models via arg (injectable)
 ```
@@ -278,7 +278,7 @@ The `POST /projects/:id/run` endpoint will be a stub returning 503 until M5 land
 - `app/globals.css` — Tailwind directives + `:root` CSS vars for background/foreground.
 - `app/page.tsx` — redirect to `/projects`.
 - `app/providers.tsx` — `<QueryClientProvider>` wrapper (client component).
-- `lib/api.ts` — typed fetch helpers, `baseUrl = process.env.NEXT_PUBLIC_API_URL`. Each method returns Zod-validated responses using schemas from `@darketing/shared`.
+- `lib/api.ts` — typed fetch helpers, `baseUrl = process.env.NEXT_PUBLIC_API_URL`. Each method returns Zod-validated responses using schemas from `@eagle-eyes/shared`.
 - `lib/utils.ts` — `cn()` (clsx + tailwind-merge).
 - `store/ui.ts` — Zustand for filters (active project, status pill, platform toggle).
 - `components/ui/` — `Button`, `Card`, `Input`, `Textarea`, `Tabs`, `Skeleton`, `Toast`. Keep it small, no shadcn copy-paste sprawl.

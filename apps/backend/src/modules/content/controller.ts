@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { ContentQuery } from '@darketing/shared';
+import type { ContentQuery } from '@eagle-eyes/shared';
 import * as service from './service';
 
 type IdParams = { id: string };

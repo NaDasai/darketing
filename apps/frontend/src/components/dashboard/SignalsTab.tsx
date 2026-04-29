@@ -9,7 +9,7 @@ import {
   Info,
   TrendingUp,
 } from 'lucide-react';
-import type { MarketReportDto } from '@darketing/shared';
+import type { MarketReportDto } from '@eagle-eyes/shared';
 import { marketSignalsApi } from '@/lib/api';
 import { Badge, Card, CardContent, Skeleton } from '@/components/ui';
 import { cn, formatDate, formatRelative } from '@/lib/utils';

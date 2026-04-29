@@ -1,6 +1,6 @@
 // Manual sanity check for the OpenRouter wiring.
 //
-// Run with:   pnpm --filter @darketing/backend exec tsx scripts/smoke-llm.ts
+// Run with:   pnpm --filter @eagle-eyes/backend exec tsx scripts/smoke-llm.ts
 // Requires OPENROUTER_API_KEY set in apps/backend/.env.
 //
 // Exits 0 on success, 1 on failure. Prints the summary and the two generated

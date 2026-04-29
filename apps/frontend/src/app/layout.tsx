@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Darketing',
+  title: 'Eagle Eyes',
   description:
     'Multi-domain content curation and post generation. Aggregate feeds, score relevance, and turn the best items into human-approved X and LinkedIn posts.',
 };

@@ -8,7 +8,7 @@ import {
   type ProjectDto,
   type Tone,
   type UpdateProjectInput,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 import { ApiError, projectsApi } from '@/lib/api';
 import {
   Button,

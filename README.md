@@ -1,4 +1,4 @@
-# Darketing
+# Eagle Eyes
 
 Multi-domain content curation with AI-powered rewriting. Aggregates RSS feeds, scores articles for relevance against your project's audience and domain, rewrites the top N as original X and LinkedIn posts, and gives you a human approval step before you copy-paste to publish.
 
@@ -9,7 +9,7 @@ Multi-domain content curation with AI-powered rewriting. Aggregates RSS feeds, s
 ## Architecture
 
 ```
-darketing/
+eagle-eyes/
 ├── apps/
 │   ├── backend/        # Fastify API + BullMQ worker + cron scheduler
 │   └── frontend/       # Next.js 14 (App Router) + Tailwind + Zustand + TanStack Query
@@ -82,7 +82,7 @@ Walk this list top-to-bottom after a fresh `pnpm install && pnpm seed`. The MVP 
 ### 1. Services up
 
 - [ ] `brew services list` shows `mongodb-community` and `redis` both **started** (or your equivalent).
-- [ ] `curl http://localhost:4000/health` returns `{"ok":true,"service":"darketing-backend"}` after `pnpm dev`.
+- [ ] `curl http://localhost:4000/health` returns `{"ok":true,"service":"eagle-eyes-backend"}` after `pnpm dev`.
 - [ ] The `pnpm dev` terminal shows three healthy streams (`backend`, `worker`, `frontend`) with no crash loops.
 
 ### 2. Frontend smoke
@@ -152,7 +152,7 @@ Walk this list top-to-bottom after a fresh `pnpm install && pnpm seed`. The MVP 
 
 - [ ] Still on the project dashboard, click **Delete**. Confirm the browser prompt.
 - [ ] The app navigates back to `/projects` with a **Project deleted** toast, and the card is gone.
-- [ ] Spot-check: `mongosh darketing --eval 'db.contentitems.countDocuments({projectId: ObjectId("<old id>")})'` returns `0` — the cascade took its children too.
+- [ ] Spot-check: `mongosh eagle-eyes --eval 'db.contentitems.countDocuments({projectId: ObjectId("<old id>")})'` returns `0` — the cascade took its children too.
 
 ### 13. Cron (optional)
 

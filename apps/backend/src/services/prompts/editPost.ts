@@ -1,4 +1,4 @@
-import type { Platform, Tone } from '@darketing/shared';
+import type { Platform, Tone } from '@eagle-eyes/shared';
 import type { ChatMessages } from './generatePosts';
 
 export interface EditPostPromptInput {

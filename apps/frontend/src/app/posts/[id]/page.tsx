@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { PostDto, PostStatus, UpdatePostInput } from '@darketing/shared';
+import type { PostDto, PostStatus, UpdatePostInput } from '@eagle-eyes/shared';
 import { ApiError, postsApi } from '@/lib/api';
 import {
   Badge,

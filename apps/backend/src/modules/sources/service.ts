@@ -3,7 +3,7 @@ import type {
   CreateSourceInput,
   DiscoveredFeed,
   SourceDto,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 import { ProjectModel, SourceModel } from '../../models';
 import { fetchFeed } from '../../services/rss.service';
 import { discoverFeeds } from '../../services/feed-discovery.service';

@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import type { Platform, PostStatus } from '@darketing/shared';
+import type { Platform, PostStatus } from '@eagle-eyes/shared';
 
 export type PlatformFilter = Platform | 'ALL';
 

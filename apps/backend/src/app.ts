@@ -112,7 +112,7 @@ export async function buildApp() {
     });
   });
 
-  app.get('/health', async () => ({ ok: true, service: 'darketing-backend' }));
+  app.get('/health', async () => ({ ok: true, service: 'eagle-eyes-backend' }));
 
   await app.register(registerProjectsRoutes);
   await app.register(registerSourcesRoutes);

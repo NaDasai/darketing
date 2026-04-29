@@ -21,7 +21,7 @@ async function main(): Promise<void> {
     await app.listen({ port: env.PORT, host: env.HOST });
     logger.info(
       { port: env.PORT, host: env.HOST, env: env.NODE_ENV },
-      'Darketing API listening',
+      'Eagle Eyes API listening',
     );
   } catch (err) {
     logger.error({ err }, 'Failed to start server');

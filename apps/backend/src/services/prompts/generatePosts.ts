@@ -1,4 +1,4 @@
-import type { Platform, Tone } from '@darketing/shared';
+import type { Platform, Tone } from '@eagle-eyes/shared';
 
 export interface GeneratePostsPromptInput {
   title: string;

@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { CreateSourceInput, DiscoverFeedsInput } from '@darketing/shared';
+import type { CreateSourceInput, DiscoverFeedsInput } from '@eagle-eyes/shared';
 import * as service from './service';
 import { SourceDuplicateError, SourceValidationError } from './service';
 

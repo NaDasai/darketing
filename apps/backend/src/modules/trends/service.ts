@@ -1,4 +1,4 @@
-import type { TrendDto, TrendsQuery } from '@darketing/shared';
+import type { TrendDto, TrendsQuery } from '@eagle-eyes/shared';
 import { ProjectModel, TrendModel } from '../../models';
 
 function toDto(doc: { toJSON: () => unknown }): TrendDto {

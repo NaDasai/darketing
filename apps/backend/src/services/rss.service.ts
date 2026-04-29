@@ -32,7 +32,7 @@ const parser: Parser<unknown, FeedItem> = new Parser<unknown, FeedItem>({
   timeout: env.RSS_FETCH_TIMEOUT_MS,
   headers: {
     // Some feeds 403 the default node-fetch UA.
-    'User-Agent': 'DarketingRSSBot/0.1 (+https://github.com/)',
+    'User-Agent': 'EagleEyesRSSBot/0.1 (+https://github.com/)',
   },
   customFields: {
     item: ['content:encoded', 'summary'],

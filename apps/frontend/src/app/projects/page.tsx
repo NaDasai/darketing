@@ -18,7 +18,7 @@ import {
   Target,
   Timer,
 } from 'lucide-react';
-import type { ProjectDto } from '@darketing/shared';
+import type { ProjectDto } from '@eagle-eyes/shared';
 import { projectsApi } from '@/lib/api';
 import { NewProjectModal } from '@/components/projects/NewProjectModal';
 import {
@@ -293,7 +293,7 @@ function LiveChip({
         )}
       >
         <Sparkles className="h-3.5 w-3.5 text-accent-300" />
-        Welcome to Darketing
+        Welcome to Eagle Eyes
       </span>
     );
   }
@@ -746,7 +746,7 @@ function HowItWorksFooter() {
           Three steps. Every run.
         </h2>
         <p className="max-w-xl text-sm text-zinc-400">
-          Darketing runs on a schedule you control. Here's what happens when
+          Eagle Eyes runs on a schedule you control. Here's what happens when
           a pipeline fires — fully automated until you sign off.
         </p>
       </div>

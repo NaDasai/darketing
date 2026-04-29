@@ -11,7 +11,7 @@ export function Navbar() {
         >
           <Logo className="h-5 w-auto text-[#2400ff]" />
           <span className="text-sm font-semibold tracking-tight text-zinc-100">
-            Darketing
+            Eagle Eyes
           </span>
         </Link>
         <nav className="flex items-center gap-1 text-sm">

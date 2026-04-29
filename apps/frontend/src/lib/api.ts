@@ -32,7 +32,7 @@ import {
   type TrendsQuery,
   type UpdatePostInput,
   type UpdateProjectInput,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';

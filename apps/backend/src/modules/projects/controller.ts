@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import type {
   CreateProjectInput,
   UpdateProjectInput,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 import * as service from './service';
 import { ProjectInactiveError } from './service';
 import { InvalidCronExpressionError } from '../../jobs/cron';

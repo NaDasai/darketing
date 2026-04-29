@@ -3,7 +3,7 @@ import type {
   AiEditPostInput,
   PostsQuery,
   UpdatePostInput,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 import * as service from './service';
 import {
   InvalidCursorError,

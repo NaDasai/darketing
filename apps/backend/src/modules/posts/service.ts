@@ -6,7 +6,7 @@ import type {
   PostDto,
   PostsQuery,
   UpdatePostInput,
-} from '@darketing/shared';
+} from '@eagle-eyes/shared';
 import {
   GeneratedPostModel,
   ProjectModel,
