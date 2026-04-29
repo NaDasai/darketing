@@ -8,6 +8,7 @@ import {
   PaginatedPostsSchema,
   PostDtoSchema,
   ProjectDtoSchema,
+  RunLogDtoSchema,
   SourceDtoSchema,
   TrendDtoSchema,
   type AiEditPostInput,
@@ -27,6 +28,8 @@ import {
   type PostDto,
   type PostsQuery,
   type ProjectDto,
+  type RunLogDto,
+  type RunLogsQuery,
   type SourceDto,
   type TrendDto,
   type TrendsQuery,
@@ -291,6 +294,22 @@ export const marketSignalsApi = {
   },
 };
 
+// ---------- Run Logs ----------
+
+export const runLogsApi = {
+  list(
+    projectId: string,
+    query: Partial<RunLogsQuery> = {},
+    signal?: AbortSignal,
+  ): Promise<RunLogDto[]> {
+    return request(`/projects/${projectId}/run-logs`, {
+      query: { limit: query.limit },
+      schema: z.array(RunLogDtoSchema),
+      signal,
+    });
+  },
+};
+
 // ---------- Jobs ----------
 
 export const jobsApi = {
@@ -311,6 +330,7 @@ export type {
   PaginatedPosts,
   PostDto,
   ProjectDto,
+  RunLogDto,
   SourceDto,
   TrendDto,
 };

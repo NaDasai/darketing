@@ -9,3 +9,11 @@ export {
   type IMarketSignal,
   type IMarketReportItemRef,
 } from './MarketReport';
+export {
+  RunLogModel,
+  type IRunLog,
+  type IRunLogEvent,
+  type IRunLogStats,
+  type RunLogStatus,
+  type RunLogTrigger,
+} from './RunLog';

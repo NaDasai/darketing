@@ -10,6 +10,7 @@ import {
   GeneratedPostModel,
   MarketReportModel,
   ProjectModel,
+  RunLogModel,
   SourceModel,
   TrendModel,
 } from '../../models';
@@ -126,6 +127,11 @@ export async function deleteProjectCascade(
       { err, projectId: id },
       'cascade: MarketReport delete failed',
     );
+  }
+  try {
+    await RunLogModel.deleteMany({ projectId });
+  } catch (err) {
+    deps.log.warn({ err, projectId: id }, 'cascade: RunLog delete failed');
   }
 
   await project.deleteOne();

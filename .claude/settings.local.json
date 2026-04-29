@@ -65,7 +65,12 @@
       "Bash(echo \"EXIT:$?\")",
       "Bash(pnpm --filter @eagle-eyes/shared build)",
       "Bash(pnpm tsx *)",
-      "Bash(pnpm add *)"
+      "Bash(pnpm add *)",
+      "Bash(pnpm --filter @eagle-eyes/backend exec tsc --noEmit)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(pnpm --filter @eagle-eyes/shared exec tsc --noEmit)",
+      "Bash(pm2 list *)",
+      "Bash(curl -s \"http://localhost:4000/projects\")"
     ]
   }
 }

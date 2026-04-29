@@ -21,6 +21,7 @@ import { SignalsTab } from '@/components/dashboard/SignalsTab';
 import { SourcesTab } from '@/components/dashboard/SourcesTab';
 import { ContentTab } from '@/components/dashboard/ContentTab';
 import { SettingsTab } from '@/components/dashboard/SettingsTab';
+import { LogsTab } from '@/components/dashboard/LogsTab';
 import {
   RunPipelineTracker,
   type RunTerminalResult,
@@ -33,7 +34,8 @@ type TabKey =
   | 'signals'
   | 'sources'
   | 'content'
-  | 'settings';
+  | 'settings'
+  | 'logs';
 
 export default function ProjectDashboardPage() {
   const params = useParams<{ id: string }>();
@@ -197,6 +199,7 @@ export default function ProjectDashboardPage() {
           <Tab value="sources">Sources</Tab>
           <Tab value="content">Content</Tab>
           <Tab value="settings">Settings</Tab>
+          <Tab value="logs">Logs</Tab>
         </TabList>
 
         <TabPanel value="posts">
@@ -216,6 +219,9 @@ export default function ProjectDashboardPage() {
         </TabPanel>
         <TabPanel value="settings">
           <SettingsTab project={p} />
+        </TabPanel>
+        <TabPanel value="logs">
+          <LogsTab projectId={projectId} />
         </TabPanel>
       </Tabs>
 
