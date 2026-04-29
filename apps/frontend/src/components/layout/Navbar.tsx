@@ -9,7 +9,7 @@ export function Navbar() {
           href="/projects"
           className="flex items-center gap-2.5 transition-opacity hover:opacity-90"
         >
-          <Logo className="h-5 w-auto text-[#2400ff]" />
+          <Logo className="h-5 w-auto text-[#2400ff] drop-shadow-[0_0_8px_rgba(36,0,255,0.6)]" />
           <span className="text-sm font-semibold tracking-tight text-zinc-100">
             Eagle Eyes
           </span>
